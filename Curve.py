@@ -42,7 +42,7 @@ class BezierCurve2D():
     def ValueLerp(self, startPos, endPos, t):
         return (startPos * (1.0 - t) + endPos * t)
 
-    def GetPoint(sefl, t, vt2p0, vt2p1, vt2p2):
+    def GetPoint(self, t, vt2p0, vt2p1, vt2p2):
         p1 = Vector2.Lerp(vt2p0, vt2p1, t)
         p2 = Vector2.Lerp(vt2p1, vt2p2, t)
         return Vector2.Lerp(p1, p2, t)
@@ -63,7 +63,7 @@ class BezierCurve2D():
 
             return self.GetPoint(t, cp[0], cp[c], cp[2])
 
-    def Curve(self, t):
+    def CurveA(self, t):
         if len(self.points) == 0:
             pass
         elif len(self.points) == 1:
@@ -77,7 +77,7 @@ class BezierCurve2D():
         
     def CreateCurve(self, count):
         for i in range(count):
-            self.curvePoint.append(self.Curve(i/count))
+            self.curvePoint.append(self.CurveA(i/count))
         
 # N차 베지어곡선 코드 Helf
     def GetCurvePointHelf(self, t):
@@ -151,16 +151,30 @@ class BezierCurve3D():
         return self.linePoints[index]
     
     def GetlinePointX(self, index):
-        aaa = self.linePoints[index]
-        return aaa[0]
+        CurveList = self.linePoints[index]
+        return CurveList[0]
     
     def GetlinePointY(self, index):
-        aaa = self.linePoints[index]
-        return aaa[1]
+        CurveList = self.linePoints[index]
+        return CurveList[1]
     
     def GetlinePointZ(self, index):
-        aaa = self.linePoints[index]
-        return aaa[2]
+        CurveList = self.linePoints[index]
+        return CurveList[2]
+    
+    
+    def GetlinePointXst(self, index):
+        StraightList = self.linePoints[index]
+        return StraightList[0]
+    
+    def GetlinePointYst(self, index):
+        StraightList = self.linePoints[index]
+        return StraightList[1]
+    
+    def GetlinePointZst(self, index):
+        StraightList = self.linePoints[index]
+        return StraightList[2]
+    
     
     def GetPoint(self, t, vt2p0, vt2p1, vt2p2):
         p1 = Vector3.Lerp(vt2p0, vt2p1, t)
@@ -183,7 +197,7 @@ class BezierCurve3D():
 
             return self.GetPoint(t, cp[0], cp[c], cp[2])
 
-    def Curve(self, t):
+    def CurveA(self, t):
         if len(self.points) == 0:
             pass
         elif len(self.points) == 1:
@@ -196,7 +210,7 @@ class BezierCurve3D():
             return self.GetCurvePoint(t)
     def CreateCurve(self, count):
         for i in range(count):
-            self.curvePoint.append(self.Curve(i/count))
+            self.curvePoint.append(self.CurveA(i/count))
 
          # N차 베지어곡선 코드 Helf
     def GetCurvePointHelf(self, t):
@@ -241,7 +255,7 @@ class BezierCurve3D():
 
     def Closed(self):
         self.points.append(self.points[0])
-            
+
 #----------------------------------------------------------------------------------------------------------------
 
 class BezierHandle2D():

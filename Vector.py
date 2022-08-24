@@ -172,8 +172,8 @@ class Vector3:
         rtZ = vt2[2] - vt1[2]
         length = math.sqrt(rtX * rtX + rtY * rtY + rtZ * rtZ)
 
-        roll = 0
         pitch = math.asin(rtY / length)
+        roll = 0
         yaw = math.atan2(-rtX, -rtZ)
 
         return (pitch, roll, yaw)
@@ -279,13 +279,13 @@ class Vector4:
 #----------------------------------------------------------------------------------------------------------------
 
 
-# aaa = Vector4().position = (1.0, 1.0, 1.0, 1.0)
-# bbb = Vector4().position = (1.0, 0.0, 0.0, 0.0)
-# ccc = Vector2().position = (-2.0, -1.0)
+# CurveList = Vector4().position = (1.0, 1.0, 1.0, 1.0)
+# toPath = Vector4().position = (1.0, 0.0, 0.0, 0.0)
+# setdir = Vector2().position = (-2.0, -1.0)
 
-# print(Vector3.Dot(aaa, bbb))
-# print(Vector4.Distance(aaa, bbb))
-# print(Vector4.Normalize(aaa))
-# print(Vector2.Abs(aaa))
-# print(Vector2.Add(aaa,bbb))
+# print(Vector3.Dot(CurveList, toPath))
+# print(Vector4.Distance(CurveList, toPath))
+# print(Vector4.Normalize(CurveList))
+# print(Vector2.Abs(CurveList))
+# print(Vector2.Add(CurveList,toPath))
 # print(Vector2.Lerp((1.0,1.0),(2.0,2.0),0.5))
