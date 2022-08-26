@@ -159,12 +159,26 @@ class Vector3:
 
     @classmethod
     def Dir(self, stPoint, endPoint):
-        return (endPoint[0]-stPoint[0], endPoint[1]-stPoint[1], endPoint[2]-stPoint[2])
+        return self.Normalize((endPoint[0]-stPoint[0], endPoint[1]-stPoint[1], endPoint[2]-stPoint[2]))
     
     @classmethod
     def Dot(self, vt1, vt2):
         return sum([i*j for (i, j) in zip(vt1, vt2)])
 
+    @classmethod
+    # Y 축이 Up 일때
+    def Lookat2(self, vt1, vt2):
+        rtX = math.atan2(vt2[1], vt1[2])
+        rtY = math.atan2(vt2[0], vt1[2])
+        rtZ = math.atan2(vt2[1], vt1[0])
+        
+        degreeX = rtX * 180 / math.pi
+        degreeY = rtY * 180 / math.pi
+        degreeZ = rtZ * 180 / math.pi
+        
+        return (degreeX, degreeY, degreeZ)
+        # return (rtX, rtY, rtZ)
+    
     @classmethod
     def Lookat(self, vt1, vt2):
         rtX = vt2[0] - vt1[0]
@@ -172,9 +186,22 @@ class Vector3:
         rtZ = vt2[2] - vt1[2]
         length = math.sqrt(rtX * rtX + rtY * rtY + rtZ * rtZ)
 
+        pitch = 0.0
+        roll = 0.0
+        yaw = 0.0
+        
         pitch = math.asin(rtY / length)
-        roll = 0
         yaw = math.atan2(-rtX, -rtZ)
+        
+        if vt1[0] < vt2 [0]:
+            pass
+        else:
+            pitch = pitch * -1.0
+        
+        if vt1[1] < vt2[1]:
+            pass
+        else:
+            yaw = yaw * -1.0
 
         return (pitch, roll, yaw)
     
@@ -289,3 +316,9 @@ class Vector4:
 # print(Vector2.Abs(CurveList))
 # print(Vector2.Add(CurveList,toPath))
 # print(Vector2.Lerp((1.0,1.0),(2.0,2.0),0.5))
+
+
+# aaa = (0, 0, 0)
+# bbb = (-1.4, -2.9, -5)
+# ccc = Vector3.Lookat2(aaa, bbb)
+# print(ccc)
