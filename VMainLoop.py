@@ -1,20 +1,15 @@
-#import Vector, VrNode
+import Vector
 import vrScenegraph
-import VrNode as Vr
+import VNode as VN
 from Vector import *
-from VrNode import *
+from VNode import *
 
 class MainLoop():
+    CurveList = []
     def __init__(self):
         pass
-    
-    def RunFind(self, pa):
-        NodePar = vrScenegraph.findNode(pa)
-        fnPCount = NodePar.getNChildren() #gets the number of children
-        print('fnPCount1 : '+str(fnPCount))
-
-        for i in range(fnPCount):
-            ti = Vr.GetNode()
-            fn = ti.SetPathList(NodePar.getChild(i))
-            self.CurveList.append(fn)
-        
+    def RunFind(self, nodeNum):
+        nodeNum = vrScenegraph.findNode(nodeNum) 
+        getN = VN.GetNode()
+        ff = getN.SetPathList(nodeNum.getChild(0))
+        self.CurveList.append(ff)

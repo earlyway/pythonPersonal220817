@@ -1,7 +1,7 @@
 sys.path.append("c:/Users/Tium/Documents/pythonPersonal220817")
 import time, sys
 from Vector import *
-
+#220915
 
 calcVertexNormals()
 clearFindCache()

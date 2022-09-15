@@ -34,7 +34,10 @@ class BezierCurve2D():
         print("BezierCurve2D Call")
         
     def Call2(self):
-        print("BezierCurve2D Call 22222")
+        print("BezierCurve2D Call 22")
+        
+    def Call3(self, a):
+        print('BezierCurve2D Call 333'+str(a))
         
     def AddPoint(self, vector2):
         self.points.append(vector2)
