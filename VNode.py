@@ -2,6 +2,7 @@ class GetNode():
     def __init__(self):
         pass
     
+    
     def SetPathList(self, node):
         rtPath = []
         getRoot = node.getChild(0).getChild(1)
