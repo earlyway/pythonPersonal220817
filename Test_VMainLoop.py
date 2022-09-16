@@ -5,14 +5,14 @@ from Vector import *
 from Test_VNode import *
 
 class MainLoop():
-    CurveList = []
+    pathCoordiList = []
     def __init__(self):
         pass
     def RunFind(self, nodeNum):
-        nodeNum = vrScenegraph.findNode(nodeNum) 
+        nodeNum = vrScenegraph.findNode(nodeNum)
         getN = VN.GetNode()
         ff = getN.SetPathList(nodeNum.getChild(0))
-        self.CurveList.append(ff)
+        self.pathCoordiList.append(ff)
         
     def testing(self,dn):
         print('dn : ' + str(dn))
