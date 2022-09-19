@@ -13,7 +13,4 @@ class MainLoop():
         getN = VN.GetNode()
         ff = getN.SetPathList(nodeNum.getChild(0))
         self.pathCoordiList.append(ff)
-        
-    def testing(self,dn):
-        print('dn : ' + str(dn))
 

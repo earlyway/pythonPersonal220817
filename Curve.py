@@ -146,6 +146,9 @@ class BezierCurve3D():
 
     def AddPoint(self, vector3):
         self.points.append(vector3)
+        
+    def AddPointLine(self, vect3):
+        self.linePoints.append(vect3)
 
     def GetPoints(self):
         return self.points
