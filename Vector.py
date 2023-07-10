@@ -183,8 +183,7 @@ class Vector3:
         # return (rtX, rtY, rtZ)
     
     @classmethod
-    def Lookat(self, vt1, vt2):
-        rtX = vt2[0] - vt1[0]
+    def Lookat(sel  = vt2[0] - vt1[0]
         rtY = vt2[1] - vt1[1]
         rtZ = vt2[2] - vt1[2]
         length = math.sqrt(rtX * rtX + rtY * rtY + rtZ * rtZ)
