@@ -33,6 +33,7 @@ print("convert Middle3 = " + str(convertMM))
 print("convert Middle4 = " + str(convertM))
 print("convertHand  = " + str(convertHand))
 
+''' # world 좌표 = 상대좌표 Matrix
 perspective = vrNodeService.findNode("Perspective")
 camPos = perspective.getWorldTransform()
 
@@ -53,6 +54,8 @@ wk = vrNodeService.findNode("cubeOrange")
 fuu = vrdNode.getWorldTransform(wk)
 
 print("fuu " + str(fuu))
+
+'''
 
 pos1 = QVector3D(g[0,3], g[1,3], g[2,3])
 pos2 = QVector3D(fff[0,3], fff[1,3], fff[2,3])
