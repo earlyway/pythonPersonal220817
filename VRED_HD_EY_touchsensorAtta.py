@@ -13,7 +13,7 @@ def createTouchSensorTumb(node):
     # variant sets
     touchSensorAttAccess.setMString("variantSets", ["toggleColor"])
     print("Attach tumbler touchsensor")
-  
+
     return touchSensor
     
 '''
@@ -23,7 +23,7 @@ def createTouchSensor1(node):
     touchSensorAttAccess = vrFieldAccess(touchSensorAtt)
     
     touchSensorAttAccess.setMString("variantSets", ["1touchsensor"])
-  
+
     return touchSensor
 '''
 def createTouchSensor2(node):
@@ -33,7 +33,7 @@ def createTouchSensor2(node):
 
     touchSensorAttAccess.setMString("variantSets", ["2constraint"])
     print("Attach number2 touchsensor")
-  
+
     return touchSensor
     
 def createTouchSensor3(node):
@@ -43,7 +43,7 @@ def createTouchSensor3(node):
 
     touchSensorAttAccess.setMString("variantSets", ["3collisionPrint"])
     print("Attach number3 touchsensor")
-  
+
     return touchSensor
     
 def createTouchSensor4(node):
@@ -53,7 +53,7 @@ def createTouchSensor4(node):
 
     touchSensorAttAccess.setMString("variantSets", ["num4Const"])
     print("Attach number4 touchsensor")
-  
+
     return touchSensor
     
 def createTouchSensor5(node):
@@ -63,7 +63,7 @@ def createTouchSensor5(node):
 
     touchSensorAttAccess.setMString("variantSets", ["num5Const"])
     print("Attach number5 touchsensor")
-  
+
     return touchSensor
     
 def createTouchSensor6(node):
@@ -73,7 +73,7 @@ def createTouchSensor6(node):
 
     touchSensorAttAccess.setMString("variantSets", ["num6Const"])
     print("Attach number6 touchsensor")
-  
+
     return touchSensor
     
 def createTouchSensor8(node):
@@ -83,7 +83,7 @@ def createTouchSensor8(node):
 
     touchSensorAttAccess.setMString("variantSets", ["getPinchStr8"])
     print("Attach number8 touchsensor")
-  
+
     return touchSensor
     
 def createTouchSensorMov_Tumb(node):
@@ -93,7 +93,17 @@ def createTouchSensorMov_Tumb(node):
 
     touchSensorAttAccess.setMString("variantSets", ["getPinchStrTumb"])
     print("Attach moving_Tumb touchsensor")
-  
+
+    return touchSensor
+    
+def createTouchSensorMov_thu_ind(node):
+    touchSensor = vrTouchSensor(node)
+    touchSensorAtt = node.getAttachment("TouchSensorAttachment")
+    touchSensorAttAccess = vrFieldAccess(touchSensorAtt)
+
+    touchSensorAttAccess.setMString("variantSets", ["finger_t_i_FollowCubeLoop"])
+    print("Attach finger_t_i_FollowCubeLoop touchsensor")
+
     return touchSensor
     
 def createTouchSensorDeact(node):
@@ -103,7 +113,7 @@ def createTouchSensorDeact(node):
 
     touchSensorAttAccess.setMString("variantSets", ["ConstDeactive"])
     print("Attach ConstDeactive touchsensor")
-  
+
     return touchSensor
 
 
@@ -116,6 +126,8 @@ tsensorTumbler = createTouchSensorTumb(findNode("Tumbler"))
 #tsensor6 = createTouchSensor6(findNode("6"))
 tsensor8 = createTouchSensor8(findNode("8"))
 tsensorMove_Tumb = createTouchSensorMov_Tumb(findNode("moving_Tumbler1"))
+tsensor_t_i = createTouchSensorMov_thu_ind(findNode("moving_Tumbler1"))
+
 #tsensorDeact = createTouchSensorDeact(findNode("deactive"))
 
 
