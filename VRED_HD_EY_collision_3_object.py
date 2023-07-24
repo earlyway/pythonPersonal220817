@@ -1,4 +1,11 @@
+'''
+수정 필요!!
+followCube가 먼저 되어야하고
 
+그 다음 collisionAnd
+
+그리고나서 distance 구하는 것이 되어야함.
+'''
 import math
 
 class followCube(vrAEBase):

@@ -3,17 +3,39 @@ clearFindCache()
 
 LHand =  vrDeviceService.getLeftTrackedHand()
 
+fd = LHand.getJointTransform(vrHandTypes.Thumb,0)
+f = LHand.getJointTransform(vrHandTypes.Thumb,1)
 ff = LHand.getJointTransform(vrHandTypes.Thumb,2)
-fff = LHand.getJointTransform(vrHandTypes.Thumb,4)
+fff = LHand.getJointTransform(vrHandTypes.Thumb,3)
+ffff = LHand.getJointTransform(vrHandTypes.Thumb,4)
+ggggg = LHand.getJointTransform(vrHandTypes.Index,0)
+gggg = LHand.getJointTransform(vrHandTypes.Index,1)
+ggg = LHand.getJointTransform(vrHandTypes.Index,2)
 gg = LHand.getJointTransform(vrHandTypes.Index,3)
 g = LHand.getJointTransform(vrHandTypes.Index,4)
+hhhhh = LHand.getJointTransform(vrHandTypes.Middle,0)
+hhhh = LHand.getJointTransform(vrHandTypes.Middle,1)
+hhh = LHand.getJointTransform(vrHandTypes.Middle,2)
 hh = LHand.getJointTransform(vrHandTypes.Middle,3)
 h = LHand.getJointTransform(vrHandTypes.Middle,4)
 i = LHand.getTransform()
 
 
+print("thumb0 QMatrix " + str(fd))
+print("thumb1 QMatrix " + str(f))
+print("thumb2 QMatrix " + str(ff))
+print("thumb3 QMatrix " + str(fff))
+print("thumb4 QMatrix " + str(ffff))
+
+print("index0 QMatrix " + str(ggggg))
+print("index1 QMatrix " + str(gggg))
+print("index2 QMatrix " + str(ggg))
 print("index3 QMatrix " + str(gg))
 print("index4 QMatrix " + str(g))
+
+print("middle0 QMatrix " + str(hhhhh))
+print("middle1 QMatrix " + str(hhhh))
+print("middle2 QMatrix " + str(hhh))
 print("middle3 QMatrix " + str(hh))
 print("middle4 QMatrix " + str(h))
 print("left VHand position QMatrix " + str(i))
@@ -49,13 +71,11 @@ print("worldHandPos " + str(world))
 
 ww = camPos * i
 print("camPos * i " + str(ww))
+'''
 
 wk = vrNodeService.findNode("cubeOrange")
 fuu = vrdNode.getWorldTransform(wk)
 
-print("fuu " + str(fuu))
-
-'''
 
 pos1 = QVector3D(g[0,3], g[1,3], g[2,3])
 pos2 = QVector3D(fff[0,3], fff[1,3], fff[2,3])
@@ -97,7 +117,14 @@ distance3 = math.sqrt(
     (pos5.y() - pos4.y())**2 + 
     (pos5.z() - pos4.z())**2
 )
-print(distance3)
+print(distance3) #cubeOrange 와 Box2 사이의 거리
+
+
+#gg = LHand.getJointTransform(vrHandTypes.Index,3)
+
+
+
+
 
 
 
