@@ -30,5 +30,5 @@ a = TestSpawn("1234") #TestSpawn 클래스에서 '1234'를 setName에 저장한 
 print('live')
 ta = [1,2,3] # 1,2,3 인자를 가진 리스트 ta 를 만듬
 ta.pop(0) # indexNum 0 을 가진 엘레멘트 제거.
-ta.append(a.setName + str( 1153) + '최강삼성') # ta 리스트에 a의 setName = '1234' 를 인자로 추가
+ta.append(a.setName + str( 1153) + '최강삼성') # ta list에 a의 setName = '1234' 를 인자로 추가
 print(ta) # 리스트 인자 출력
