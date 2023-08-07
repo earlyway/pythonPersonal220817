@@ -1,4 +1,11 @@
+'''
+남은 기능과 테스트
 
+1. obj1, obj2 에 따라 다르게 constraint 을 거는 것.
+2. 카드같은 얇은 오브젝트도 테스트해봐야함.
+3. 하나의 vset로 여러 오브젝트를 const 할수있는지 테스트
+4. 손가락을 따라오는 큐브만 vset1로 쓰고 나머지 const 관련 기능들은 다른 vset2, vset3, …. 로 분할해도 되는지 테스트.
+'''
 import math
 
 class followCube(vrAEBase):
@@ -56,7 +63,7 @@ class followCube(vrAEBase):
         self.subLoop()
         print("loop stop by force followCube")
         
-         
+
 class distances_obj1(vrAEBase):
     global deleteConst
     deleteConst = False
@@ -164,7 +171,7 @@ class CollisionAnd_obj1(vrAEBase):
         
         if self.isActive() == true:
             collide = 0
-                                             # collide = 0 으로 초기화
+                                            # collide = 0 으로 초기화
             l = len(self.cols)                    # 들어온 list형 인자값의 개수를 l로 정의
             for i in range(l):                   # l 숫자만큼 for문
                 if not self.cols[i].isColliding():# list형 index를 하나씩 불러와 isColliding을 출력해서 False 형태라면
@@ -179,18 +186,18 @@ class CollisionAnd_obj1(vrAEBase):
             else :
                 isColl = False
                 distances_instance.loop(False)
-                       
+
     def substractLoop(self):
         self.subLoop()
         print("loop stop by force 3 collid")
     
     
-   
+
 #--------------------------------------------------------------
 
 print("test line-------------------------")
     
-   
+
 cdscd = followCube() #loop1
 
 # create some collision objects #
@@ -214,3 +221,4 @@ vrK.connect(distances_instance.substractLoop)
 print("collxy type : " + str(type(collxy)) )
 #vrK.connect(collxy(elfeo).substractLoop)
 vrK.connect(collxy.substractLoop)
+
