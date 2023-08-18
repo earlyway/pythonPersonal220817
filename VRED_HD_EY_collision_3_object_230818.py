@@ -94,14 +94,25 @@ class distances_obj1(vrAEBase):
         self.Clear()
         self.left_Constraint_target = vrConstraintService.createParentConstraint([leftController.getNode()], constrained_movin_Tumbler1_NS, True)
         print("4")
+        findMat = vrMaterialService.findMaterial("Reflective Plastic")
+        getTr = vrdBRDFMaterial.getTransparency(findMat)
+        colorVect = QVector3D(0.25, 0.25, 0.25)
+        getTr.setSeeThrough(colorVect)
         
     def ConstOff_Th_In(self):
         global dis_standard
         global dis_standard_check
         self.Clear()
+        
         dis_standard_check = False
         dis_standard = 0
         print("got the 0")
+        
+        findMat = vrMaterialService.findMaterial("Reflective Plastic")
+        getTr = vrdBRDFMaterial.getTransparency(findMat)
+        colorVect = QVector3D(0, 0, 0)
+        getTr.setSeeThrough(colorVect)
+        
         self.subLoop()
         print("constraintOff and loop stop")
         
