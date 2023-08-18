@@ -97,6 +97,7 @@ class distances_obj1(vrAEBase):
         
     def ConstOff_Th_In(self):
         global dis_standard
+        global dis_standard_check
         self.Clear()
         dis_standard_check = False
         dis_standard = 0
