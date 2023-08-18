@@ -177,13 +177,13 @@ class CollisionAnd_obj1(vrAEBase):
                 isColl = True                   #l 숫자만큼 for문이 끝나고 만약 collide 값이 l 숫자와 같다면
                 #self.callAllConnected()             #호출된 모든 연결 Connected 를 가져옴. 그리고 loop. 아래처럼 ?.connect 형태의 것만 가져오는 것임. 주의!
                 if dis_standard_check == False :
-                    followCube.dis_measure()
+                    cdscd.dis_measure()
                     print("extract dis_standard" + str(dis_standard))
                 distances_instance.loop(True)
             else :
                 isColl = False
                 distances_instance.loop(False)
-                       
+                
     def substractLoop(self):
         self.subLoop()
         print("loop stop by force 3 collid")
