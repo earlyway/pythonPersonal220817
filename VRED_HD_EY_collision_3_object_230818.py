@@ -54,13 +54,15 @@ class followCube(vrAEBase):
         c_i_QM_Vect = vrMathService.getTranslation(c_i_QM)
         
     def dis_measure(self): #collision 되었을때, const on 유지 or Off 실행의 기준
-        
+        global dis_standard
+        dis_standard = 0
+        global dis_standard_check
         dis_standard = math.sqrt(
                     (c_t_QM_Vect.x() - c_i_QM_Vect.x())**2 +
                     (c_t_QM_Vect.y() - c_i_QM_Vect.y())**2 +
                     (c_t_QM_Vect.z() - c_i_QM_Vect.z())**2
                     )
-        print("dis_standard : " + str(dis_standard))
+        #print("dis_standard : " + str(dis_standard))
         dis_standard_check = True
         print("got the 1")
         return dis_standard
@@ -102,6 +104,7 @@ class distances_obj1(vrAEBase):
         print("constraintOff and loop stop")
         
     def dis_measure2(self): # 기준이 된 큐브간 거리보다 작으면 const on 유지, 크면 const off 실행
+        global dis_standard2
         dis_standard2 = math.sqrt(
                     (c_t_QM_Vect.x() - c_i_QM_Vect.x())**2 +
                     (c_t_QM_Vect.y() - c_i_QM_Vect.y())**2 +
@@ -113,8 +116,7 @@ class distances_obj1(vrAEBase):
     
     def loop(self, isColl_Argu):
         print("(isColl_Argu : " + str(isColl_Argu))
-        
-        if  isColl_Argu == True and dis_standard_check == True :
+        if isColl_Argu == True :
             self.ConstOn_Th_In()
             print("ConstOn_Th_In")
             self.dis_measure2()
@@ -126,18 +128,14 @@ class distances_obj1(vrAEBase):
             
         elif isColl_Argu == False :
             #self.ConstOff_Th_In()
-            print("ConstOff1_Th_In")
+            print("ConstOff_Th_In_if1")
             self.dis_measure2()
             print("dis_standard_False : " + str(dis_standard))
             print("dis_standard2_False : " + str(dis_standard2))
             print("dis_standard_check_False : " + str(dis_standard_check))
             if dis_standard_check == True and dis_standard < dis_standard2:
                 self.ConstOff_Th_In()
-                print("ConstOff2_Th_In")
-            '''self.dis_measure2()
-            
-            if dis_standard < dis_standard2:
-                self.ConstOff_Th_In()'''
+                print("ConstOff_Th_In_if2")
 
     def substractLoop(self):
         self.subLoop()
@@ -151,9 +149,6 @@ class CollisionAnd_obj1(vrAEBase):
     isColl = False 
     def __init__(self, cols):
         vrAEBase.__init__(self)
-        '''if dis_standard_check == False:
-            followCube.dis_measure()
-            print("extract dis_standard") '''
         self.addLoop()
         print("collisionAnd_obj1 Start")
         self.cols = cols
@@ -176,14 +171,21 @@ class CollisionAnd_obj1(vrAEBase):
                 print("sticker")
                 isColl = True                   #l 숫자만큼 for문이 끝나고 만약 collide 값이 l 숫자와 같다면
                 #self.callAllConnected()             #호출된 모든 연결 Connected 를 가져옴. 그리고 loop. 아래처럼 ?.connect 형태의 것만 가져오는 것임. 주의!
+                print("dis_standard_check----1" + str(dis_standard_check))
                 if dis_standard_check == False :
                     cdscd.dis_measure()
-                    print("extract dis_standard" + str(dis_standard))
+                    print("dis_standard_check----2" + str(dis_standard_check))
+                    print("extract dis_standard " + str(dis_standard))
                 distances_instance.loop(True)
             else :
                 isColl = False
+                '''
+                if dis_standard_check == True:
+                    cdscd.dis_measure()
+                '''
+                print("dis_standard_check----1-1" + str(dis_standard_check))
                 distances_instance.loop(False)
-                
+                       
     def substractLoop(self):
         self.subLoop()
         print("loop stop by force 3 collid")
@@ -195,7 +197,7 @@ class Collision_cube_dist_standard(vrAEBase):
         cldk = len(temp)
         
         if dis_standard_check == False :
-            followCube.dis_measure()
+            cdscd.dis_measure()
         else:
             print("cldk" + str(cldk))
         
