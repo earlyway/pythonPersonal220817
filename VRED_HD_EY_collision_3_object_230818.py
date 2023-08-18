@@ -1,21 +1,3 @@
-'''
-현재 dis_standard 기준이 되어야하는 큐브간 거리가 넘어오지 못하고 있음.
-
-다시 재설계
-
-큐브2 오브젝트1이 collision 되면
-dis_measure 메서드가 한번 호출되어 기준 큐브간거리 dis_standard 를 리턴함.
-
-constraint on이 되도록 loop를 돌고 동시에 
-실시간 큐브간거리를 측정하는 dis_measure2 메서드를 지속적으로 호출시켜 큐브2 간 거리를 dis_standard2 로 리턴함.
-
-실시간 큐브간거리 dis_standard2 보다 dis_standard 값이 적다면 constraint On을 유지하고 값이 크다면 constraint off 실행.
-
-동시에 dis_standard 값은 0으로 초기화함.
-
-큐브2 오브젝트1의 collision이 충돌되지 않는다고 해도 dis_standard 값이 0이 아니라면(기준이 있다면) constraint On을 유지해야한다.
-'''
-
 import math
 
 class followCube(vrAEBase):
@@ -49,7 +31,7 @@ class followCube(vrAEBase):
     
     def __init__(self):
         vrAEBase.__init__(self)
-        print("1")
+        print("1 followCube")
         self.addLoop()
         print("followCube Start")
         
@@ -71,14 +53,15 @@ class followCube(vrAEBase):
         c_t_QM_Vect = vrMathService.getTranslation(c_t_QM)
         c_i_QM_Vect = vrMathService.getTranslation(c_i_QM)
         
-    def dis_measure(): #collision 되었을때, const on 유지 or Off 실행의 기준
+    def dis_measure(self): #collision 되었을때, const on 유지 or Off 실행의 기준
+        
         dis_standard = math.sqrt(
                     (c_t_QM_Vect.x() - c_i_QM_Vect.x())**2 +
                     (c_t_QM_Vect.y() - c_i_QM_Vect.y())**2 +
                     (c_t_QM_Vect.z() - c_i_QM_Vect.z())**2
                     )
         print("dis_standard : " + str(dis_standard))
-        dis_standard_check  = True
+        dis_standard_check = True
         print("got the 1")
         return dis_standard
         
@@ -91,13 +74,12 @@ class followCube(vrAEBase):
         
          
 class distances_obj1(vrAEBase):
-    print("3")
-    
     def __init__(self, isColl_Argu):
         vrAEBase.__init__(self)
+        print("3 distances_obj1")
         self.addLoop()
         self.subLoop()
-        self.setActive(true)
+        self.setActive(True)
     def recEvent(self, state):
         vrAEBase.recEvent(self, state)
         
@@ -132,7 +114,7 @@ class distances_obj1(vrAEBase):
     def loop(self, isColl_Argu):
         print("(isColl_Argu : " + str(isColl_Argu))
         
-        if  isColl_Argu == True :
+        if  isColl_Argu == True and dis_standard_check == True :
             self.ConstOn_Th_In()
             print("ConstOn_Th_In")
             self.dis_measure2()
@@ -165,17 +147,17 @@ class distances_obj1(vrAEBase):
 
 class CollisionAnd_obj1(vrAEBase):
     global isColl
+    global dis_standard_check
     isColl = False 
     def __init__(self, cols):
         vrAEBase.__init__(self)
-        if dis_standard_check == False:
+        '''if dis_standard_check == False:
             followCube.dis_measure()
-            print("extract dis_standard")
-            dis_standard_check = True
+            print("extract dis_standard") '''
         self.addLoop()
         print("collisionAnd_obj1 Start")
         self.cols = cols
-        self.setActive(true)
+        self.setActive(True)
         
     def recEvent(self, state):
         vrAEBase.recEvent(self, state)
@@ -183,7 +165,7 @@ class CollisionAnd_obj1(vrAEBase):
     def loop(self):
         if self.isActive() == true:
             collide = 0
-                                            # collide = 0 으로 초기화
+                                             # collide = 0 으로 초기화
             l = len(self.cols)                    # 들어온 list형 인자값의 개수를 l로 정의
             for i in range(l):                   # l 숫자만큼 for문
                 if not self.cols[i].isColliding():# list형 index를 하나씩 불러와 isColliding을 출력해서 False 형태라면
@@ -194,11 +176,14 @@ class CollisionAnd_obj1(vrAEBase):
                 print("sticker")
                 isColl = True                   #l 숫자만큼 for문이 끝나고 만약 collide 값이 l 숫자와 같다면
                 #self.callAllConnected()             #호출된 모든 연결 Connected 를 가져옴. 그리고 loop. 아래처럼 ?.connect 형태의 것만 가져오는 것임. 주의!
+                if dis_standard_check == False :
+                    followCube.dis_measure()
+                    print("extract dis_standard" + str(dis_standard))
                 distances_instance.loop(True)
             else :
                 isColl = False
                 distances_instance.loop(False)
-                    
+                       
     def substractLoop(self):
         self.subLoop()
         print("loop stop by force 3 collid")
@@ -212,7 +197,7 @@ class Collision_cube_dist_standard(vrAEBase):
         if dis_standard_check == False :
             followCube.dis_measure()
         else:
-            print(cldk)
+            print("cldk" + str(cldk))
         
     def recEvent(self, state):
         vrAEBase.recEvent(self, state)
@@ -222,7 +207,7 @@ class Collision_cube_dist_standard(vrAEBase):
 
 print("test line-------------------------")
     
-   
+#global cdscd
 cdscd = followCube() #loop1
 
 # create some collision objects #
@@ -231,7 +216,7 @@ colly = vrCollision([constrained_movin_Tumbler1_NS], [cIn])
 
 distances_instance = distances_obj1(False)
 
-collxy_dist_standard = Collision_cube_dist_standard([collx, colly])
+#collxy_dist_standard = Collision_cube_dist_standard([collx, colly])
 collxy = CollisionAnd_obj1([collx, colly]) 
 #collxy.connect("print 'WM-------------------'")
 
