@@ -10,6 +10,7 @@ try:
     import vrOSGWidget
     import vrScenegraph
     import vrNodePtr
+    import vrVariantSets
     import vrVariants
     import time
 except ImportError:
@@ -34,9 +35,24 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         self.btn_2.clicked.connect(self.button2Function)
 
     def button1Function(self) :
+        global comboBox_vset_list
+        comboBox_vset_list = []
+        
         print("btn_1 Clicked")
-        vrVariants.selectVariantSet("func_creditCard")
-
+        vrVariants.selectVariantSet("func_creditCard") # func_creditCard vset을 선택해서 실행시킴
+        vred_vset_list1 = vrVariantSets.getVariantSets() # 현재 오픈된 vred 파일에 있는 vset 들을 모두 가져와 list 형태로 리턴함
+        print(vred_vset_list1)
+        
+        for element1 in vred_vset_list1 : # 가져온 vset lists 중에서
+            if "func_" in element1:         # func_ 문자열을 가진 원소만 가져와
+                comboBox_vset_list.append(element1)  # combobox에 들어갈 원소로 list up
+                
+        print(comboBox_vset_list)
+        '''
+        if "func_" in vred_vset_list1 : #comboBox에 들어갈 원소 func_만 찾아내서 새로운 list를 만듦
+            comboBox_vset_list.append()
+        print("comboBox_vset_list")
+'''
     def button2Function(self) :
         print("btn_2 Clicked")
 
