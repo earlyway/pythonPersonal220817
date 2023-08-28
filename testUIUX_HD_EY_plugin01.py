@@ -10,11 +10,11 @@ try:
     import vrOSGWidget
     import vrScenegraph
     import vrNodePtr
+    import vrVariants
     import time
 except ImportError:
     importError = True
     pass
-
 
 import uiTools
 
@@ -35,6 +35,7 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
 
     def button1Function(self) :
         print("btn_1 Clicked")
+        vrVariants.selectVariantSet("func_creditCard")
 
     def button2Function(self) :
         print("btn_2 Clicked")
