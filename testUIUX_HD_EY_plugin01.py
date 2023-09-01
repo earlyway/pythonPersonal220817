@@ -38,24 +38,17 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         self.ui_pushbutton_load.clicked.connect(self.loadFunction) 
         self.ui_pushbutton_reset.clicked.connect(self.resetFunction)
         
-        
-        
-        self.syncComboBox()
-        
-        self.vset_select_combo_box1.clicked.connect(self.cbBox1)
-        self.vset_select_combo_box2.clicked.connect(self.cbBox2)
-        '''
-        self.vset_select_combo_box1_radio_on.clicked.connect(self.radioBox1)
-        self.vset_select_combo_box1_radio_off.clicked.connect(self.radioBox1)
+        self.vset_select_combo_box1_radio_on.toggled.connect(self.radioBox1)
         
         self.vset_select_combo_box2_radio_on.clicked.connect(self.radioBox2)
         self.vset_select_combo_box2_radio_off.clicked.connect(self.radioBox2)
-'''
+
 
     def loadFunction(self) :
         self.vset_select_combo_box1.clear() #초기화
         self.vset_select_combo_box2.clear() #초기화
         comboBox_vset_list = [] #load 버튼을 누를때마다 combobox list를 초기화. 이걸 하지않으면 list가 쌓임.
+        
         
         vrVariants.selectVariantSet("func_creditCard")
         vred_vset_list1 = vrVariantSets.getVariantSets()
@@ -69,6 +62,10 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         
         self.vset_select_combo_box1.addItems(comboBox_vset_list)
         self.vset_select_combo_box2.addItems(comboBox_vset_list)
+        self.vset_select_combo_box1.setCurrentIndex(0)
+        self.vset_select_combo_box2.setCurrentIndex(1)
+        
+        self.syncComboBox()
         
     def resetFunction(self) :
         print("reset btn Clicked")
@@ -76,15 +73,31 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
     def syncComboBox(self) :
         for i in range(0, self.comboBox_vset_list.count()):
             print("sync "+ i)
-            '''
+            
     def radioBox1(self):
-        if self.vset_select_combo_box1_radio_on.isChecked() : print("box1 on checked")
-        elif self.vset_select_combo_box1_radio_off.isChecked() : print("box1 off checked")
+        if self.vset_select_combo_box1_radio_on.isChecked() : 
+            print("RB1 on checked")
+            '''
+            rightnowOnVset = vset_select_combo_box1.currentText()
+            print("rightnowOn" + str(rightnowOnVset))
+            RBtempVar1 = rightnowOnVset.find(rightnowOnVset, 5)
+            vrVariantSets.selectVariantSet("func"+ "_" + RBtempVar1)
+            '''
+        else : 
+            print("RB1 off checked")
+            '''
+            rightnowOffVset = vset_select_combo_box1.currentText()
+            print("rightnowOff" + str(rightnowOffVset))
+            RBtempVar2 = rightnowOffVset.find(rightnowOffVset, 5)
+            vrVariantSets.selectVariantSet("_" + RBtempVar2)
+            '''
         
     def radioBox2(self):
-        if self.vset_select_combo_box2_radio_on.isChecked() : print("box2 on checked")
-        elif self.vset_select_combo_box2_radio_off.isChecked() : print("box2 off checked")
-'''
+        if self.vset_select_combo_box2_radio_on.isChecked() : 
+            print("RB2 on checked")
+        elif self.vset_select_combo_box2_radio_off.isChecked() : 
+            print("RB2 off checked")
+
 
 if not importError:
     viewpointPlugin = vrWindowClass(VREDPluginWidget)
