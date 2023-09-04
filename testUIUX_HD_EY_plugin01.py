@@ -40,8 +40,7 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         
         self.vset_select_combo_box1_radio_on.toggled.connect(self.radioBox1)
         
-        self.vset_select_combo_box2_radio_on.clicked.connect(self.radioBox2)
-        self.vset_select_combo_box2_radio_off.clicked.connect(self.radioBox2)
+        self.vset_select_combo_box2_radio_on.toggled.connect(self.radioBox2)
 
 
     def loadFunction(self) :
@@ -65,7 +64,7 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         self.vset_select_combo_box1.setCurrentIndex(0)
         self.vset_select_combo_box2.setCurrentIndex(1)
         
-        self.syncComboBox()
+        
         
     def resetFunction(self) :
         print("reset btn Clicked")
@@ -95,7 +94,7 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
     def radioBox2(self):
         if self.vset_select_combo_box2_radio_on.isChecked() : 
             print("RB2 on checked")
-        elif self.vset_select_combo_box2_radio_off.isChecked() : 
+        else : 
             print("RB2 off checked")
 
 
