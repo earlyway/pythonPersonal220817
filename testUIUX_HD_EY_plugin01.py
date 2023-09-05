@@ -76,8 +76,8 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         self.vset_select_combo_box1.clear() #초기화
         self.vset_select_combo_box2.clear() #초기화
         
-        self.vset_select_combo_box1_radio_off.checked() #0905 radio button 디폴트값인 off로 지정.
-        self.vset_select_combo_box2_radio_off.checked()
+        self.vset_select_combo_box1_radio_off.setChecked(True) #0905 radio button 디폴트값인 off로 지정.
+        self.vset_select_combo_box2_radio_off.setChecked(True)
         
         pb2 = vrNodePtr.findNode("powerbank2") #0905 오브젝트를 특정위치로 리셋
         pb2.setWorldTranslation(1250, 1575, 1200)#0905
