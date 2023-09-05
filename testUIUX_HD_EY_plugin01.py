@@ -94,7 +94,7 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         vrVariants.selectVariantSet("vset_reset_btn") #0905 vred의 vset 호출. 여기엔 constraint 삭제, loop 삭제, 사용하지 않는 material 삭제, 모든 오브젝트를 hide.
         
 
-    def ComboBox1Click(self) : # combobox 를 클릭해 리스트중 하나를 클릭하면 클릭된 리스트 이름을 비교.
+    def ComboBox1Click(self) : # 0905 combobox 를 클릭해 리스트중 하나를 클릭하면 클릭된 리스트 이름을 비교.
         print("combobox1 clicked")
         if self.vset_select_combo_box1.currentText() == comboBox_vset_list[0] :
             print("create power bank model")
@@ -122,30 +122,24 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
     def radioBox1(self):
         if self.vset_select_combo_box1_radio_on.isChecked() : 
             print("RB1 on checked")
-            
             rightnowOnVset = self.vset_select_combo_box1.currentText()
             print("rightnowOn" + str(rightnowOnVset))
-            testA = vrVariants.selectVariantSet("_" + rightnowOnVset + "show")#0905 여기가 작동하지 않는중.. testA print를 하면 None 값이 출력되는 상황.
-            print(testA)
-            
+            vrVariants.selectVariantSet("_" + rightnowOnVset[5:] + "_show")#0905 func_objName 에서 slice 후 덧붙여서 vset호출           
         else : 
             print("RB1 off checked")
-            
             rightnowOffVset = self.vset_select_combo_box1.currentText()
-            testB = vrVariants.selectVariantSet("_" + rightnowOffVset + "hide")#0905
-            print(testB)
+            vrVariants.selectVariantSet("_" + rightnowOffVset[5:] + "_hide")#0905
+            
         
     def radioBox2(self):
         if self.vset_select_combo_box2_radio_on.isChecked() : 
             print("RB2 on checked")
-            
             rightnowOnVset2 = self.vset_select_combo_box2.currentText()
-            vrVariants.selectVariantSet("_" + rightnowOnVset2 + "show")#0905
-        elif self.vset_select_combo_box2_radio_off.isChecked() : 
+            vrVariants.selectVariantSet("_" + rightnowOnVset2[5:] + "_show")#0905
+        else:
             print("RB2 off checked")
-            
             rightnowOffVset2 = self.vset_select_combo_box1.currentText()
-            vrVariants.selectVariantSet("_" + rightnowOffVset2 + "hide")#0905
+            vrVariants.selectVariantSet("_" + rightnowOffVset2[5:] + "_hide")#0905
 
 
 if not importError:
