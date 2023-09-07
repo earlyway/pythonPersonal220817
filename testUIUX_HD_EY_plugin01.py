@@ -79,7 +79,7 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         self.vset_select_combo_box1_radio_off.setChecked(True) #0905 radio button 디폴트값인 off로 지정.
         self.vset_select_combo_box2_radio_off.setChecked(True)
         
-        pb2 = vrNodePtr.findNode("powerbank2") #0905 오브젝트를 특정위치로 리셋
+        pb2 = vrNodePtr.findNode("powerbank2") #0905 오브젝트를 특정 pos, 특정 rot로 리셋
         pb2.setWorldTranslation(1250, 1575, 1200)#0905
         pb2.setRotation(0,0,-180)#0905
         
@@ -98,12 +98,15 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         print("combobox1 clicked")
         if self.vset_select_combo_box1.currentText() == comboBox_vset_list[0] :
             print("create power bank model")
+            vrVariants.selectVariantSet(self.vset_select_combo_box1.currentText())
             
         elif self.vset_select_combo_box1.currentText() == comboBox_vset_list[1] :
             print("create func_tumbler model")
+            vrVariants.selectVariantSet(self.vset_select_combo_box1.currentText())
             
         elif self.vset_select_combo_box1.currentText() == comboBox_vset_list[2] :
             print("create func_creditCard model")
+            vrVariants.selectVariantSet(self.vset_select_combo_box1.currentText())
             
             
     def ComboBox2Click(self) :
@@ -111,12 +114,15 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         
         if self.vset_select_combo_box2.currentText() == comboBox_vset_list[0] :
             print("create power bank model")
+            vrVariants.selectVariantSet(self.vset_select_combo_box2.currentText())
             
         elif self.vset_select_combo_box2.currentText() == comboBox_vset_list[1] :
             print("create func_tumbler model")
+            vrVariants.selectVariantSet(self.vset_select_combo_box2.currentText())
             
         elif self.vset_select_combo_box2.currentText() == comboBox_vset_list[2] :
             print("create func_creditCard model")
+            vrVariants.selectVariantSet(self.vset_select_combo_box2.currentText())
             
             
     def radioBox1(self):
