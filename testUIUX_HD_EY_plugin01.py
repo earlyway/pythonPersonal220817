@@ -66,9 +66,10 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         print("comboBox vset list = " + str(comboBox_vset_list))
         
         self.vset_select_combo_box1.addItems(comboBox_vset_list)
+        #self.vset_select_combo_box1.setCurrentIndex(0)  #0911
         self.vset_select_combo_box2.addItems(comboBox_vset_list)
-        #self.vset_select_combo_box1.setCurrentIndex(0) #0905
-        self.vset_select_combo_box2.setCurrentIndex(1)
+        
+        #self.vset_select_combo_box2.setCurrentIndex(1) #0911
         
         
     def resetFunction(self) :
@@ -76,25 +77,25 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         self.vset_select_combo_box1.clear() #초기화
         self.vset_select_combo_box2.clear() #초기화
         
-        self.vset_select_combo_box1_radio_off.setChecked(True) #0905 radio button 디폴트값인 off로 지정.
+        self.vset_select_combo_box1_radio_off.setChecked(True)# radio button 디폴트값인 off로 지정.
         self.vset_select_combo_box2_radio_off.setChecked(True)
         
-        pb2 = vrNodePtr.findNode("powerbank2") #0905 오브젝트를 특정 pos, 특정 rot로 리셋
-        pb2.setWorldTranslation(1250, 1575, 1200)#0905
-        pb2.setRotation(0,0,-180)#0905
+        pb2 = vrScenegraph.findNode("powerbank2") # 오브젝트를 특정 pos, 특정 rot로 리셋
+        pb2.setWorldTranslation(1250, 1575, 1200) # vrNodePtr->vrScenegraph
+        pb2.setRotation(0,0,-180)
         
-        tbr = vrNodePtr.findNode("moving_Tumbler1")
-        tbr.setWorldTranslation(1340, 1600, 1000)
+        tbr = vrScenegraph.findNode("moving_Tumbler1")
+        tbr.setWorldTranslation(1530, 1600, 1150)
         tbr.setRotation(0,0,0)
         
-        ccb = vrNodePtr.findNode("credit_card_blue")
-        ccb.setWorldTranslation(1500, 1650, 1000)
+        ccb = vrScenegraph.findNode("credit_card_blue")
+        ccb.setWorldTranslation(1525, 1600, 1020)
         ccb.setRotation(0,0,-180)
 
         vrVariants.selectVariantSet("vset_reset_btn") #0905 vred의 vset 호출. 여기엔 constraint 삭제, loop 삭제, 사용하지 않는 material 삭제, 모든 오브젝트를 hide.
         
 
-    def ComboBox1Click(self) : # 0905 combobox 를 클릭해 리스트중 하나를 클릭하면 클릭된 리스트 이름을 비교.
+    def ComboBox1Click(self) : # combobox 를 클릭해 리스트중 하나를 클릭하면 클릭된 리스트 이름을 비교.
         print("combobox1 clicked")
         if self.vset_select_combo_box1.currentText() == comboBox_vset_list[0] :
             print("create power bank model")
@@ -130,22 +131,24 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
             print("RB1 on checked")
             rightnowOnVset = self.vset_select_combo_box1.currentText()
             print("rightnowOn" + str(rightnowOnVset))
-            vrVariants.selectVariantSet("_" + rightnowOnVset[5:] + "_show")#0905 func_objName 에서 slice 후 덧붙여서 vset호출           
+            vrVariants.selectVariantSet("_" + rightnowOnVset[5:] + "_show")# func_objName 에서 slice 후 덧붙여서 vset호출           
         else : 
             print("RB1 off checked")
             rightnowOffVset = self.vset_select_combo_box1.currentText()
-            vrVariants.selectVariantSet("_" + rightnowOffVset[5:] + "_hide")#0905
+            vrVariants.selectVariantSet("_" + rightnowOffVset[5:] + "_hide")
             
         
     def radioBox2(self):
         if self.vset_select_combo_box2_radio_on.isChecked() : 
             print("RB2 on checked")
             rightnowOnVset2 = self.vset_select_combo_box2.currentText()
-            vrVariants.selectVariantSet("_" + rightnowOnVset2[5:] + "_show")#0905
+            print(rightnowOnVset2[5:])
+            vrVariants.selectVariantSet("_" + rightnowOnVset2[5:] + "_show")
         else:
             print("RB2 off checked")
-            rightnowOffVset2 = self.vset_select_combo_box1.currentText()
-            vrVariants.selectVariantSet("_" + rightnowOffVset2[5:] + "_hide")#0905
+            rightnowOffVset2 = self.vset_select_combo_box2.currentText() #0911
+            print(rightnowOffVset2[5:])
+            vrVariants.selectVariantSet("_" + rightnowOffVset2[5:] + "_hide")
 
 
 if not importError:
