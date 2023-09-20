@@ -23,7 +23,7 @@ import uiTools
 listToLoad = False
 
 
-vrTOC_form, vrTOC_base = uiTools.loadUiType("010.ui")
+vrTOC_form, vrTOC_base = uiTools.loadUiType("010_editVer3.ui")
 
 
 class vrWindowClass(vrTOC_form, vrTOC_base):
@@ -38,19 +38,52 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         self.parent = parent
         self.setupUi(self)
         
-        self.ui_pushbutton_load.clicked.connect(self.loadFunction) 
+        self.ui_pushbutton_Lefthand.clicked.connect(self.LHandFunction) #버튼이 클릭되면 펑션을 호출
+        self.ui_pushbutton_Righthand.clicked.connect(self.RHandFunction)
+        
+        self.ui_pushbutton_Lefthand.clicked.connect(self.LHand_cc) #버튼 클릭 신호가 감지되면 펑션을 호출
+        self.ui_pushbutton_Righthand.clicked.connect(self.RHand_cc)
+        
+        self.ui_pushbutton_load.clicked.connect(self.loadFunction)
         self.ui_pushbutton_reset.clicked.connect(self.resetFunction)
         
-        self.vset_select_combo_box1.currentIndexChanged.connect(self.ComboBox1Click)
-        self.vset_select_combo_box2.currentIndexChanged.connect(self.ComboBox2Click)
+        self.vset_select_combo_box1.currentIndexChanged.connect(self.ComboBox1Click) #콤보 박스의 현재 인덱스가 변경되면 펑션을 호출
+        #self.vset_select_combo_box2.currentIndexChanged.connect(self.ComboBox2Click)
         
-        self.vset_select_combo_box1_radio_on.toggled.connect(self.radioBox1)
-        self.vset_select_combo_box2_radio_on.toggled.connect(self.radioBox2)
-
-
+        self.vset_select_combo_box1_radio_on.toggled.connect(self.radioBox1) #라디오 버튼이 변경될때마다 펑션을 호출
+        #self.vset_select_combo_box2_radio_on.toggled.connect(self.radioBox2)
+        
+    def LHandFunction(self) :
+        #lhand vset 호출
+        vrVariants.selectVariantSet("set_LHand") # 왼손/오른손 변경 버튼
+        
+        self.ui_pushbutton_Lefthand.setCheckable(True)
+        self.ui_pushbutton_Righthand.setCheckable(False)
+        
+        self.groupBox_2.setEnabled(True) # hand side가 선택되면 다음 단계의 버튼이 활성화됨
+    
+    def RHandFunction(self) :
+        #rhand vset 호출
+        vrVariants.selectVariantSet("set_RHand") # 왼손/오른손 변경 버튼
+        
+        self.ui_pushbutton_Lefthand.setCheckable(False)
+        self.ui_pushbutton_Righthand.setCheckable(True)
+        
+        self.groupBox_2.setEnabled(True)
+        
+    def LHand_cc(self):
+        #self.ui_pushbutton_Lefthand.setStyleSheet("background-color : orange")
+        self.ui_pushbutton_Lefthand.setStyleSheet("font: bold 16px")
+        self.ui_pushbutton_Righthand.setStyleSheet("background-color : dark gray")
+        
+    def RHand_cc(self):
+        self.ui_pushbutton_Lefthand.setStyleSheet("background-color : dark gray")
+        #self.ui_pushbutton_Righthand.setStyleSheet("background-color : orange")
+        self.ui_pushbutton_Righthand.setStyleSheet("font: bold 16px")
+        
     def loadFunction(self) :
         self.vset_select_combo_box1.clear() #초기화
-        self.vset_select_combo_box2.clear() #초기화
+        #self.vset_select_combo_box2.clear()
         global comboBox_vset_list
         comboBox_vset_list = [] #load 버튼을 누를때마다 combobox list를 초기화. 이걸 하지않으면 list가 쌓임.
         
@@ -66,19 +99,20 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         print("comboBox vset list = " + str(comboBox_vset_list))
         
         self.vset_select_combo_box1.addItems(comboBox_vset_list)
-        #self.vset_select_combo_box1.setCurrentIndex(0)  #0911
+        #self.vset_select_combo_box1.setCurrentIndex(0)
         self.vset_select_combo_box2.addItems(comboBox_vset_list)
+        #self.vset_select_combo_box2.setCurrentIndex(1)
         
-        #self.vset_select_combo_box2.setCurrentIndex(1) #0911
+        self.groupBox_3.setEnabled(true) # load 버튼을 클릭하게 되면 다음 단계가 활성화.
         
         
     def resetFunction(self) :
         print("reset btn Clicked")
         self.vset_select_combo_box1.clear() #초기화
-        self.vset_select_combo_box2.clear() #초기화
+        #self.vset_select_combo_box2.clear() #초기화
         
         self.vset_select_combo_box1_radio_off.setChecked(True)# radio button 디폴트값인 off로 지정.
-        self.vset_select_combo_box2_radio_off.setChecked(True)
+        #self.vset_select_combo_box2_radio_off.setChecked(True)
         
         pb2 = vrScenegraph.findNode("powerbank2") # 오브젝트를 특정 pos, 특정 rot로 리셋
         pb2.setWorldTranslation(1250, 1575, 1200) # vrNodePtr->vrScenegraph
@@ -94,6 +128,11 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
 
         vrVariants.selectVariantSet("vset_reset_btn") #0905 vred의 vset 호출. 여기엔 constraint 삭제, loop 삭제, 사용하지 않는 material 삭제, 모든 오브젝트를 hide.
         
+        self.ui_pushbutton_Lefthand.setStyleSheet("background-color : default")
+        self.ui_pushbutton_Righthand.setStyleSheet("background-color : default")
+        
+        self.groupBox_2.setEnabled(false) # 리셋버튼을 누르면 상태를 비활성화.
+        self.groupBox_3.setEnabled(false)
 
     def ComboBox1Click(self) : # combobox 를 클릭해 리스트중 하나를 클릭하면 클릭된 리스트 이름을 비교.
         print("combobox1 clicked")
