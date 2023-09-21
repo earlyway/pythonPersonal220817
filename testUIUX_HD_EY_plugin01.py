@@ -31,7 +31,7 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
     global comboBox_vset_list
     comboBox_vset_list = []
     
-    def __init__(self, parent=None) :
+    def __init__(self, parent = None) :
         #Setup and connect the plugins UI.
         super(vrWindowClass, self).__init__(parent)
         parent.layout().addWidget(self)
@@ -100,10 +100,12 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         
         self.vset_select_combo_box1.addItems(comboBox_vset_list)
         #self.vset_select_combo_box1.setCurrentIndex(0)
-        self.vset_select_combo_box2.addItems(comboBox_vset_list)
+        #self.vset_select_combo_box2.addItems(comboBox_vset_list)
         #self.vset_select_combo_box2.setCurrentIndex(1)
         
-        self.groupBox_3.setEnabled(true) # load 버튼을 클릭하게 되면 다음 단계가 활성화.
+        self.groupBox_3.setEnabled(True) # load 버튼을 클릭하게 되면 다음 단계가 활성화.
+        self.vset_select_combo_box1.setEnabled(True) # combobox 가 비활성화 상태로 유지되는 현상 체크
+        self.ui_pushbutton_reset.setEnabled(True)
         
         
     def resetFunction(self) :
@@ -114,25 +116,15 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         self.vset_select_combo_box1_radio_off.setChecked(True)# radio button 디폴트값인 off로 지정.
         #self.vset_select_combo_box2_radio_off.setChecked(True)
         
-        pb2 = vrScenegraph.findNode("powerbank2") # 오브젝트를 특정 pos, 특정 rot로 리셋
-        pb2.setWorldTranslation(1250, 1575, 1200) # vrNodePtr->vrScenegraph
-        pb2.setRotation(0,0,-180)
-        
-        tbr = vrScenegraph.findNode("moving_Tumbler1")
-        tbr.setWorldTranslation(1530, 1600, 1150)
-        tbr.setRotation(0,0,0)
-        
-        ccb = vrScenegraph.findNode("credit_card_blue")
-        ccb.setWorldTranslation(1525, 1600, 1020)
-        ccb.setRotation(0,0,-180)
 
         vrVariants.selectVariantSet("vset_reset_btn") #0905 vred의 vset 호출. 여기엔 constraint 삭제, loop 삭제, 사용하지 않는 material 삭제, 모든 오브젝트를 hide.
         
-        self.ui_pushbutton_Lefthand.setStyleSheet("background-color : default")
-        self.ui_pushbutton_Righthand.setStyleSheet("background-color : default")
+        self.ui_pushbutton_Lefthand.setStyleSheet("background-color : dark gray")
+        self.ui_pushbutton_Righthand.setStyleSheet("background-color : dark gray")
         
-        self.groupBox_2.setEnabled(false) # 리셋버튼을 누르면 상태를 비활성화.
-        self.groupBox_3.setEnabled(false)
+        self.groupBox_2.setEnabled(False) # 리셋버튼을 누르면 상태를 비활성화.
+        self.groupBox_3.setEnabled(False)
+        self.ui_pushbutton_reset.setEnabled(False)
 
     def ComboBox1Click(self) : # combobox 를 클릭해 리스트중 하나를 클릭하면 클릭된 리스트 이름을 비교.
         print("combobox1 clicked")
