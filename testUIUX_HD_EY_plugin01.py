@@ -23,7 +23,7 @@ import uiTools
 listToLoad = False
 
 
-vrTOC_form, vrTOC_base = uiTools.loadUiType("010_editVer3.ui")
+vrTOC_form, vrTOC_base = uiTools.loadUiType("010_editVer4.ui")
 
 
 class vrWindowClass(vrTOC_form, vrTOC_base):
@@ -52,6 +52,8 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         
         self.vset_select_combo_box1_radio_on.toggled.connect(self.radioBox1) #라디오 버튼이 변경될때마다 펑션을 호출
         #self.vset_select_combo_box2_radio_on.toggled.connect(self.radioBox2)
+        
+        self.ui_horizontalSlider.valueChanged.connect(self.sensitivity_scale)
         
     def LHandFunction(self) :
         #lhand vset 호출
@@ -88,9 +90,9 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         comboBox_vset_list = [] #load 버튼을 누를때마다 combobox list를 초기화. 이걸 하지않으면 list가 쌓임.
         
         
-        vrVariants.selectVariantSet("func_creditCard")
+        #vrVariants.selectVariantSet("func_creditCard")
         vred_vset_list1 = vrVariantSets.getVariantSets()
-        print(vred_vset_list1)
+        #print(vred_vset_list1)
         
         for element1 in vred_vset_list1 : 
             if "func_" in element1:         
@@ -180,6 +182,10 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
             rightnowOffVset2 = self.vset_select_combo_box2.currentText() #0911
             print(rightnowOffVset2[5:])
             vrVariants.selectVariantSet("_" + rightnowOffVset2[5:] + "_hide")
+            
+            
+    def sensitivity_scale(self):
+        print("sensitivity_scale changed!!")
 
 
 if not importError:
