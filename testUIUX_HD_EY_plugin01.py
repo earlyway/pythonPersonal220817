@@ -184,8 +184,11 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
             vrVariants.selectVariantSet("_" + rightnowOffVset2[5:] + "_hide")
             
             
-    def sensitivity_scale(self):
+    def sensitivity_scale(self, val):
         print("sensitivity_scale changed!!")
+        print(val)
+        #slider_value = int(self.slider_label.text())
+        
 
 
 if not importError:
