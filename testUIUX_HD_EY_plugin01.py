@@ -186,9 +186,14 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
             
     def sensitivity_scale(self, val):
         print("sensitivity_scale changed!!")
-        print(val)
-        #slider_value = int(self.slider_label.text())
+        print(val)  #slider 로 변경되는 값을 터미널에 출력
+        self.slider_label.setText(str(val)) # label 값을 slider bar 값으로 set
         
+        thumb_scale = vrScenegraph.findNode("cubeThumb4")
+        index_scale = vrScenegraph.findNode("cubeIndex4")
+        
+        thumb_scale.setScale(val * (1/100), val * (1/100), val * (1/100)) # scale 값 반영
+        index_scale.setScale(val * (1/100), val * (1/100), val * (1/100))
 
 
 if not importError:
