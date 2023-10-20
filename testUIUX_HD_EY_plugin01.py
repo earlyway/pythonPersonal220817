@@ -14,7 +14,8 @@ try:
     import time
     import math
     import vrAEBase
-    
+
+
 
 except ImportError:
     importError = True
@@ -28,6 +29,7 @@ listToLoad = False
 vrTOC_form, vrTOC_base = uiTools.loadUiType("temp.ui")
 
 ###------------------------------------
+hand_select = "left-controller"
 
 class followCube():
     global cTh
@@ -39,16 +41,8 @@ class followCube():
     constrained_movin_Tumbler1_NS = vrNodeService.findNode("powerbank2")
     
     
-    #global rightController
-    #rightController = vrDeviceService.getVRDevice("right-controller")
-    
-    #global RR_thumb_4
-    #global RR_index_4
-    #RR_thumb_4 = vrNodeService.findNode('R_thumb_4_INT', root=getInternalRootNode())
-    #RR_index_4 = vrNodeService.findNode('R_index_4_INT', root=getInternalRootNode())
-    
-    #global right_Constraint_target
-    #right_Constraint_target = None
+    global btw_Controller
+    btw_Controller = vrDeviceService.getVRDevice(hand_select)
     
     global dis_standard_check
     dis_standard_check = False
@@ -101,7 +95,7 @@ class followCube():
         
     def substractLoop(self):
         self.subLoop()
-        
+
 class distances_obj1():
     def __init__(self, isColl_Argu):
         vrAEBase.__init__(self)
@@ -121,10 +115,11 @@ class distances_obj1():
         self.Clear()
 
         if setL == True and setR == False :
-            self.left_Constraint_target = vrConstraintService.createParentConstraint([leftController.getNode()], constrained_movin_Tumbler1_NS, True)
+            self.left_Constraint_target = vrConstraintService.createParentConstraint([btw_Controller.getNode()], constrained_movin_Tumbler1_NS, True)
         elif setL == False and setR == True :
-            self.right_Constraint_target = vrConstraintService.createParentConstraint([rightController.getNode()], constrained_movin_Tumbler1_NS, True)
+            self.right_Constraint_target = vrConstraintService.createParentConstraint([btw_Controller.getNode()], constrained_movin_Tumbler1_NS, True)
         #change material transparency 0->1
+        
         findMat = vrMaterialService.findMaterial("Material.003")
         getTr = vrdBRDFMaterial.getTransparency(findMat)
         colorVect = QVector3D(0.25, 0.25, 0.25)
@@ -138,6 +133,7 @@ class distances_obj1():
         dis_standard_check = False
         dis_standard = 0
         #change material transparency 1->0
+        
         findMat = vrMaterialService.findMaterial("Material.003")
         getTr = vrdBRDFMaterial.getTransparency(findMat)
         colorVect = QVector3D(0, 0, 0)
@@ -181,7 +177,7 @@ class distances_obj1():
     def substractLoop(self):
         self.subLoop()
         print("loop stop by force distance_obj1")
-        
+
 
 class CollisionAnd_obj1():
     global isColl
@@ -226,7 +222,7 @@ class CollisionAnd_obj1():
         print("loop stop by force 3 collid")
 
 #find collision area, find sorted obj
-area1 = findNode("c_area_1")
+area1 = vrNodeService.findNode("c_area_1")
 
 area_powerbank_Inputed = vrScenegraph.findNode("powerbank2")
 
@@ -380,6 +376,8 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
     def update_button(self) :
         global obj_list
         obj_list = []
+        global obj_list_element_name
+        obj_list_element_name = []
         
         self.cbbox_updated.clear() #콤보박스 초기화
         
@@ -390,27 +388,46 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         
         for obj_list_element in obj_list:
             obj_list_element_name = obj_list_element.getName()
+            self.cbbox_updated.addItems(obj_list_element_name)
             print(obj_list_element_name) # 이름으로 가져오기 성공
-            
-        self.cbbox_updated.addItems(obj_list_element_name)
-        '''
+
+        
         for ind in range(goon.getChildCount()):
             child = goon.getChild(ind)
             if child.getName() == "9":
                 print("detect 9!!")
-                '''
+                
                 
     def radio_Lhand(self):
         global hand_select
+        hand_select = 1
+        global setL
+        global setR
+        global LL_thumb_4
+        global LL_index_4
+        global RR_thumb_4
+        global RR_index_4
         if self.radiobtn_lefthand.isChecked() :
             print("left")
             hand_select = "left-controller"
+            setL == True
+            setR == False
+            LL_thumb_4 = vrNodeService.findNode('L_thumb_4_INT', root=getInternalRootNode())
+            LL_index_4 = vrNodeService.findNode('L_index_4_INT', root=getInternalRootNode())
         else :
             print("right")
             hand_select = "right-controller"
+            setL == False
+            setR == True
+            RR_thumb_4 = vrNodeService.findNode('R_thumb_4_INT', root=getInternalRootNode())
+            RR_index_4 = vrNodeService.findNode('R_index_4_INT', root=getInternalRootNode())
             
     def obj_hand_start(self):
-        print("aa2")
+        global controlled_obj
+        
+        controlled_obj = self.cbbox_updated.currentText()
+        
+        
         #follow to finger tip with cube
         cdscd = followCube()
 
