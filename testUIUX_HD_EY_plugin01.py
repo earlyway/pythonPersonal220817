@@ -23,7 +23,7 @@ import uiTools
 listToLoad = False
 
 
-vrTOC_form, vrTOC_base = uiTools.loadUiType("010_editVer4.ui")
+vrTOC_form, vrTOC_base = uiTools.loadUiType("temp.ui")
 
 
 class vrWindowClass(vrTOC_form, vrTOC_base):
@@ -38,22 +38,24 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         self.parent = parent
         self.setupUi(self)
         
-        self.ui_pushbutton_Lefthand.clicked.connect(self.LHandFunction) #버튼이 클릭되면 펑션을 호출
-        self.ui_pushbutton_Righthand.clicked.connect(self.RHandFunction)
+        #self.ui_pushbutton_Lefthand.clicked.connect(self.LHandFunction) #버튼이 클릭되면 펑션을 호출
+        #self.ui_pushbutton_Righthand.clicked.connect(self.RHandFunction)
         
-        self.ui_pushbutton_Lefthand.clicked.connect(self.LHand_cc) #버튼 클릭 신호가 감지되면 펑션을 호출
-        self.ui_pushbutton_Righthand.clicked.connect(self.RHand_cc)
+        #self.ui_pushbutton_Lefthand.clicked.connect(self.LHand_cc) #버튼 클릭 신호가 감지되면 펑션을 호출
+        #self.ui_pushbutton_Righthand.clicked.connect(self.RHand_cc)
         
-        self.ui_pushbutton_load.clicked.connect(self.loadFunction)
-        self.ui_pushbutton_reset.clicked.connect(self.resetFunction)
+        #self.ui_pushbutton_load.clicked.connect(self.loadFunction)
+        #self.ui_pushbutton_reset.clicked.connect(self.resetFunction)
         
-        self.vset_select_combo_box1.currentIndexChanged.connect(self.ComboBox1Click) #콤보 박스의 현재 인덱스가 변경되면 펑션을 호출
-        #self.vset_select_combo_box2.currentIndexChanged.connect(self.ComboBox2Click)
+        #self.vset_select_combo_box1.currentIndexChanged.connect(self.ComboBox1Click) #콤보 박스의 현재 인덱스가 변경되면 펑션을 호출
         
-        self.vset_select_combo_box1_radio_on.toggled.connect(self.radioBox1) #라디오 버튼이 변경될때마다 펑션을 호출
-        #self.vset_select_combo_box2_radio_on.toggled.connect(self.radioBox2)
         
-        self.ui_horizontalSlider.valueChanged.connect(self.sensitivity_scale)
+        #self.vset_select_combo_box1_radio_on.toggled.connect(self.radioBox1) #라디오 버튼이 변경될때마다 펑션을 호출
+        
+        
+        #self.ui_horizontalSlider.valueChanged.connect(self.sensitivity_scale)
+        
+        self.psbtn_update.clicked.connect(self.update_button)
         
     def LHandFunction(self) :
         #lhand vset 호출
@@ -194,6 +196,29 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         
         thumb_scale.setScale(val * (1/100), val * (1/100), val * (1/100)) # scale 값 반영
         index_scale.setScale(val * (1/100), val * (1/100), val * (1/100))
+        
+    def update_button(self) :
+        global obj_list
+        obj_list = []
+        
+        self.cbbox_updated.clear() #콤보박스 초기화
+        
+        goon = vrNodeService.findNode("objFolder") #오브젝트가 모여있는 폴더 찾기
+        #찾은 폴더에서 각 노드들의 이름을 가져오기
+        
+        obj_list = goon.getChildren() #각 노드의 id가 list형태로 들어옴. 이것을 이름으로 가져와야함.
+        
+        for obj_list_element in obj_list:
+            obj_list_element_name = obj_list_element.getName()
+            print(obj_list_element_name) # 이름으로 가져오기 성공
+        '''
+        for ind in range(goon.getChildCount()):
+            child = goon.getChild(ind)
+            if child.getName() == "9":
+                print("detect 9!!")
+                '''
+
+
 
 
 if not importError:
