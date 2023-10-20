@@ -38,24 +38,18 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         self.parent = parent
         self.setupUi(self)
         
-        #self.ui_pushbutton_Lefthand.clicked.connect(self.LHandFunction) #버튼이 클릭되면 펑션을 호출
-        #self.ui_pushbutton_Righthand.clicked.connect(self.RHandFunction)
-        
         #self.ui_pushbutton_Lefthand.clicked.connect(self.LHand_cc) #버튼 클릭 신호가 감지되면 펑션을 호출
         #self.ui_pushbutton_Righthand.clicked.connect(self.RHand_cc)
         
-        #self.ui_pushbutton_load.clicked.connect(self.loadFunction)
-        #self.ui_pushbutton_reset.clicked.connect(self.resetFunction)
-        
         #self.vset_select_combo_box1.currentIndexChanged.connect(self.ComboBox1Click) #콤보 박스의 현재 인덱스가 변경되면 펑션을 호출
         
-        
         #self.vset_select_combo_box1_radio_on.toggled.connect(self.radioBox1) #라디오 버튼이 변경될때마다 펑션을 호출
-        
         
         #self.ui_horizontalSlider.valueChanged.connect(self.sensitivity_scale)
         
         self.psbtn_update.clicked.connect(self.update_button)
+        
+        self.radiobtn_lefthand.toggled.connect(self.radio_Lhand)
         
     def LHandFunction(self) :
         #lhand vset 호출
@@ -145,22 +139,6 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
             vrVariants.selectVariantSet(self.vset_select_combo_box1.currentText())
             
             
-    def ComboBox2Click(self) :
-        print("combobox2 clicked")
-        
-        if self.vset_select_combo_box2.currentText() == comboBox_vset_list[0] :
-            print("create power bank model")
-            vrVariants.selectVariantSet(self.vset_select_combo_box2.currentText())
-            
-        elif self.vset_select_combo_box2.currentText() == comboBox_vset_list[1] :
-            print("create func_tumbler model")
-            vrVariants.selectVariantSet(self.vset_select_combo_box2.currentText())
-            
-        elif self.vset_select_combo_box2.currentText() == comboBox_vset_list[2] :
-            print("create func_creditCard model")
-            vrVariants.selectVariantSet(self.vset_select_combo_box2.currentText())
-            
-            
     def radioBox1(self):
         if self.vset_select_combo_box1_radio_on.isChecked() : 
             print("RB1 on checked")
@@ -171,19 +149,6 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
             print("RB1 off checked")
             rightnowOffVset = self.vset_select_combo_box1.currentText()
             vrVariants.selectVariantSet("_" + rightnowOffVset[5:] + "_hide")
-            
-        
-    def radioBox2(self):
-        if self.vset_select_combo_box2_radio_on.isChecked() : 
-            print("RB2 on checked")
-            rightnowOnVset2 = self.vset_select_combo_box2.currentText()
-            print(rightnowOnVset2[5:])
-            vrVariants.selectVariantSet("_" + rightnowOnVset2[5:] + "_show")
-        else:
-            print("RB2 off checked")
-            rightnowOffVset2 = self.vset_select_combo_box2.currentText() #0911
-            print(rightnowOffVset2[5:])
-            vrVariants.selectVariantSet("_" + rightnowOffVset2[5:] + "_hide")
             
             
     def sensitivity_scale(self, val):
@@ -211,12 +176,21 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         for obj_list_element in obj_list:
             obj_list_element_name = obj_list_element.getName()
             print(obj_list_element_name) # 이름으로 가져오기 성공
+            
+        self.cbbox_updated.addItems(obj_list_element_name)
         '''
         for ind in range(goon.getChildCount()):
             child = goon.getChild(ind)
             if child.getName() == "9":
                 print("detect 9!!")
                 '''
+                
+    def radio_Lhand(self):
+        if self.radiobtn_lefthand.isChecked() :
+            print("left")
+        else :
+            print("right")
+        
 
 
 
