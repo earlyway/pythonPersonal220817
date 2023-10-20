@@ -12,6 +12,8 @@ try:
     import vrVariantSets
     import vrVariants
     import time
+    import math
+    import vrAEBase
     
 
 except ImportError:
@@ -25,6 +27,217 @@ listToLoad = False
 
 vrTOC_form, vrTOC_base = uiTools.loadUiType("temp.ui")
 
+###------------------------------------
+
+class followCube():
+    global cTh
+    global cIn
+    cTh = vrNodeService.findNode("cubeThumb4")
+    cIn = vrNodeService.findNode("cubeIndex4")
+    
+    global constrained_movin_Tumbler1_NS
+    constrained_movin_Tumbler1_NS = vrNodeService.findNode("powerbank2")
+    
+    
+    #global rightController
+    #rightController = vrDeviceService.getVRDevice("right-controller")
+    
+    #global RR_thumb_4
+    #global RR_index_4
+    #RR_thumb_4 = vrNodeService.findNode('R_thumb_4_INT', root=getInternalRootNode())
+    #RR_index_4 = vrNodeService.findNode('R_index_4_INT', root=getInternalRootNode())
+    
+    #global right_Constraint_target
+    #right_Constraint_target = None
+    
+    global dis_standard_check
+    dis_standard_check = False
+    
+    global dis_standard
+    dis_standard = 0
+    
+    global dis_standard2
+    dis_standard2 = 0
+    
+    def __init__(self):
+        vrAEBase.__init__(self)
+        self.addLoop()
+        
+    def recEvent(self, state):
+        vrAEBase.recEvent(self, state)
+        
+    def ffc_distance_Th_In(self):
+        if setL == True and setR == False :
+            cTh.setWorldTranslation(LL_thumb_4.getWorldTranslation())
+            cIn.setWorldTranslation(LL_index_4.getWorldTranslation())
+        elif setL == False and setR == True :
+            cTh.setWorldTranslation(RR_thumb_4.getWorldTranslation())
+            cIn.setWorldTranslation(RR_index_4.getWorldTranslation())
+        
+        global c_t_QM
+        global c_i_QM
+        c_t_QM = vrdNode.getWorldTransform(cTh)
+        c_i_QM = vrdNode.getWorldTransform(cIn)
+    
+        global c_t_QM_Vect
+        global c_i_QM_Vect
+        c_t_QM_Vect = vrMathService.getTranslation(c_t_QM)
+        c_i_QM_Vect = vrMathService.getTranslation(c_i_QM)
+        
+    def dis_measure(self): #collision 되었을때, const on 유지 or Off 실행의 기준이 되는 dis_standard 를 리턴
+        global dis_standard
+        dis_standard = 0
+        global dis_standard_check
+        dis_standard = math.sqrt(
+                    (c_t_QM_Vect.x() - c_i_QM_Vect.x())**2 +
+                    (c_t_QM_Vect.y() - c_i_QM_Vect.y())**2 +
+                    (c_t_QM_Vect.z() - c_i_QM_Vect.z())**2
+                    )
+        dis_standard_check = True
+        return dis_standard
+        
+    def loop(self):
+        self.ffc_distance_Th_In()
+        
+    def substractLoop(self):
+        self.subLoop()
+        
+class distances_obj1():
+    def __init__(self, isColl_Argu):
+        vrAEBase.__init__(self)
+        self.addLoop()
+        self.subLoop()
+        self.setActive(True)
+        
+    def recEvent(self, state):
+        vrAEBase.recEvent(self, state)
+        
+    def Clear(self):
+        amount = vrConstraintService.getConstraints()
+        for i in amount:
+            vrConstraintService.deleteConstraint(i)
+            
+    def ConstOn_Th_In(self):
+        self.Clear()
+
+        if setL == True and setR == False :
+            self.left_Constraint_target = vrConstraintService.createParentConstraint([leftController.getNode()], constrained_movin_Tumbler1_NS, True)
+        elif setL == False and setR == True :
+            self.right_Constraint_target = vrConstraintService.createParentConstraint([rightController.getNode()], constrained_movin_Tumbler1_NS, True)
+        #change material transparency 0->1
+        findMat = vrMaterialService.findMaterial("Material.003")
+        getTr = vrdBRDFMaterial.getTransparency(findMat)
+        colorVect = QVector3D(0.25, 0.25, 0.25)
+        getTr.setSeeThrough(colorVect)
+        
+    def ConstOff_Th_In(self):
+        global dis_standard
+        global dis_standard_check
+        self.Clear()
+        
+        dis_standard_check = False
+        dis_standard = 0
+        #change material transparency 1->0
+        findMat = vrMaterialService.findMaterial("Material.003")
+        getTr = vrdBRDFMaterial.getTransparency(findMat)
+        colorVect = QVector3D(0, 0, 0)
+        getTr.setSeeThrough(colorVect)
+        
+        self.subLoop()
+        
+    def dis_measure2(self): # 기준이 된 큐브간 거리보다 작으면 const on 유지, 크면 const off 실행
+        global dis_standard2
+        dis_standard2 = math.sqrt(
+                    (c_t_QM_Vect.x() - c_i_QM_Vect.x())**2 +
+                    (c_t_QM_Vect.y() - c_i_QM_Vect.y())**2 +
+                    (c_t_QM_Vect.z() - c_i_QM_Vect.z())**2
+                    )
+        #print("dis_standard2 : " + str(dis_standard2))
+        return dis_standard2
+        
+    
+    def loop(self, isColl_Argu):
+        #print("(isColl_Argu : " + str(isColl_Argu))
+        if isColl_Argu == True :
+            self.ConstOn_Th_In()
+            #print("ConstOn_Th_In")
+            self.dis_measure2()
+            #print("dis_standard_True : " + str(dis_standard))
+            #print("dis_standard2_True : " + str(dis_standard2))
+            #print("dis_standard_check_True : " + str(dis_standard_check))
+            if dis_standard_check == True and dis_standard < dis_standard2:
+                self.ConstOff_Th_In()
+            
+        elif isColl_Argu == False :
+            #print("ConstOff_Th_In_if1")
+            self.dis_measure2()
+            #print("dis_standard_False : " + str(dis_standard))
+            #print("dis_standard2_False : " + str(dis_standard2))
+            #print("dis_standard_check_False : " + str(dis_standard_check))
+            if dis_standard_check == True and dis_standard < dis_standard2:
+                self.ConstOff_Th_In()
+                print("ConstOff_Th_In_if2")
+
+    def substractLoop(self):
+        self.subLoop()
+        print("loop stop by force distance_obj1")
+        
+
+class CollisionAnd_obj1():
+    global isColl
+    global dis_standard_check
+    isColl = False 
+    def __init__(self, cols):
+        vrAEBase.__init__(self)
+        self.addLoop()
+        self.cols = cols
+        self.setActive(True)
+        
+    def recEvent(self, state):
+        vrAEBase.recEvent(self, state)
+        
+    def loop(self):
+        if self.isActive() == true:
+            collide = 0
+
+            l = len(self.cols)
+            for i in range(l):
+                if not self.cols[i].isColliding():
+                    break
+                else:
+                    collide += 1
+            if collide == l:
+                print("sticker")
+                isColl = True
+                #self.callAllConnected()
+                #print("dis_standard_check----1" + str(dis_standard_check))
+                if dis_standard_check == False :
+                    cdscd.dis_measure()
+                    #print("dis_standard_check----2" + str(dis_standard_check))
+                    #print("extract dis_standard " + str(dis_standard))
+                distances_instance.loop(True)
+            else :
+                isColl = False
+                #print("dis_standard_check----1-1" + str(dis_standard_check))
+                distances_instance.loop(False)
+
+    def substractLoop(self):
+        self.subLoop()
+        print("loop stop by force 3 collid")
+
+#find collision area, find sorted obj
+area1 = findNode("c_area_1")
+
+area_powerbank_Inputed = vrScenegraph.findNode("powerbank2")
+
+def areaStand1():
+    area_powerbank_Inputed.setRotation(0,0,180)
+    aoi1 = area_powerbank_Inputed.getWorldTranslation()
+    area_powerbank_Inputed.setWorldTranslation(aoi1[0], aoi1[1], float(890.0))
+    
+
+
+###------------------------------------------------------------
 
 class vrWindowClass(vrTOC_form, vrTOC_base):
     
@@ -50,6 +263,8 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         self.psbtn_update.clicked.connect(self.update_button)
         
         self.radiobtn_lefthand.toggled.connect(self.radio_Lhand)
+        
+        self.psbtn_obj_hand_start.clicked.connect(self.obj_hand_start)
         
     def LHandFunction(self) :
         #lhand vset 호출
@@ -186,11 +401,35 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
                 '''
                 
     def radio_Lhand(self):
+        global hand_select
         if self.radiobtn_lefthand.isChecked() :
             print("left")
+            hand_select = "left-controller"
         else :
             print("right")
+            hand_select = "right-controller"
+            
+    def obj_hand_start(self):
+        print("aa2")
+        #follow to finger tip with cube
+        cdscd = followCube()
+
+        # create some collision objects
+        collx = vrCollision([cTh], [constrained_movin_Tumbler1_NS])
+        colly = vrCollision([constrained_movin_Tumbler1_NS], [cIn])
+
+        distances_instance = distances_obj1(False)
+
+        collxy = CollisionAnd_obj1([collx, colly]) 
+        #collxy.connect("print 'WM-------------------'")
+
+
+        #create collision area
+        collArea1 = vrCollision([area_powerbank_Inputed], [area1])
+        collArea1.connect(areaStand1)
         
+        
+
 
 
 
