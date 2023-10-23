@@ -14,6 +14,7 @@ try:
     import time
     import math
     import vrAEBase
+    import vrCollision
 
 
 
@@ -31,6 +32,7 @@ vrTOC_form, vrTOC_base = uiTools.loadUiType("temp.ui")
 ###------------------------------------
 global hand_select
 hand_select = "left-controller"
+global cdscd
 
 class followCube():
     global cTh
@@ -39,8 +41,8 @@ class followCube():
     cIn = vrNodeService.findNode("cubeIndex4")
     
     global constrained_movin_Tumbler1_NS
-    constrained_movin_Tumbler1_NS = vrNodeService.findNode("powerbank2")
-    
+    controlled_obj = None
+    constrained_movin_Tumbler1_NS = vrNodeService.findNode(controlled_obj)
     
     global btw_Controller
     btw_Controller = vrDeviceService.getVRDevice(hand_select)
@@ -98,6 +100,7 @@ class followCube():
         self.subLoop()
 
 class distances_obj1():
+    global isColl_Argu
     def __init__(self, isColl_Argu):
         vrAEBase.__init__(self)
         self.addLoop()
@@ -194,6 +197,7 @@ class CollisionAnd_obj1():
         vrAEBase.recEvent(self, state)
         
     def loop(self):
+        global isColl
         if self.isActive() == true:
             collide = 0
 
@@ -223,9 +227,7 @@ class CollisionAnd_obj1():
         print("loop stop by force 3 collid")
 
 #find collision area, find sorted obj
-area1 = vrNodeService.findNode("c_area_1")
 
-area_powerbank_Inputed = vrScenegraph.findNode("powerbank2")
 
 def areaStand1():
     area_powerbank_Inputed.setRotation(0,0,180)
@@ -379,9 +381,16 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         global obj_list_element_name
         obj_list_element_name = []
         global hand_select
+        global controlled_obj
+        global area1
+        global area_powerbank_Inputed
+        global setL
+        global setR
         
         self.cbbox_updated.clear() #콤보박스 초기화
         
+        setL = True
+        setR = False
         hand_select = "left-controller"
         self.radiobtn_lefthand.setChecked(True)
         
@@ -394,6 +403,13 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
             obj_list_element_name = obj_list_element.getName() #id를 이름형태로 변환
             print("obj_list_element_name : " + obj_list_element_name) # 이름으로 가져오기 성공
             self.cbbox_updated.addItem(obj_list_element_name) #addItems 하면 각 str문자마다 combobox 요소로 들어가게 되고 s를 빼면 문자열로 들어감.
+        
+        
+        controlled_obj = obj_list_element_name[-1]
+        
+        area1 = vrNodeService.findNode("c_area_1")
+
+        area_powerbank_Inputed = vrScenegraph.findNode(controlled_obj)
         
         for ind in range(goon.getChildCount()):
             child = goon.getChild(ind)
@@ -415,25 +431,47 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
             hand_select = "left-controller"
             setL == True
             setR == False
-            LL_thumb_4 = vrNodeService.findNode('L_thumb_4_INT', root=getInternalRootNode())
-            LL_index_4 = vrNodeService.findNode('L_index_4_INT', root=getInternalRootNode())
         else :
             print("right")
             hand_select = "right-controller"
             setL == False
             setR == True
-            RR_thumb_4 = vrNodeService.findNode('R_thumb_4_INT', root=getInternalRootNode())
-            RR_index_4 = vrNodeService.findNode('R_index_4_INT', root=getInternalRootNode())
             
     def obj_hand_start(self):
+        global cdscd
         global controlled_obj
         controlled_obj = self.cbbox_updated.currentText()
+        print("one")
+        global hand_select
+        global LL_index_4
+        global LL_thumb_4
+        global RR_thumb_4
+        global RR_index_4
+        
+        if self.radiobtn_lefthand.isChecked() :
+            print("left")
+            hand_select = "left-controller"
+            setL == True
+            setR == False
+            print(vrScenegraphService.getInternalRootNode())
+            print(vrNodeService.getRootNode())
+            LL_thumb_4 = vrNodeService.findNode('L_thumb_4_INT', root=vrScenegraphService.getInternalRootNode())
+            LL_index_4 = vrNodeService.findNode('L_index_4_INT', root=vrScenegraphService.getInternalRootNode())
+        else :
+            print("right")
+            hand_select = "right-controller"
+            setL == False
+            setR == True
+            RR_thumb_4 = vrNodeService.findNode('R_thumb_4_INT', root=vrScenegraphService.getInternalRootNode())
+            RR_index_4 = vrNodeService.findNode('R_index_4_INT', root=vrScenegraphService.getInternalRootNode())
         
         #follow to finger tip with cube
-        cdscd = followCube()
+        cdscd = followCube
+        print("two")
 
         # create some collision objects
         collx = vrCollision([cTh], [constrained_movin_Tumbler1_NS])
+        print("three")
         colly = vrCollision([constrained_movin_Tumbler1_NS], [cIn])
 
         distances_instance = distances_obj1(False)
