@@ -29,6 +29,7 @@ listToLoad = False
 vrTOC_form, vrTOC_base = uiTools.loadUiType("temp.ui")
 
 ###------------------------------------
+global hand_select
 hand_select = "left-controller"
 
 class followCube():
@@ -120,10 +121,10 @@ class distances_obj1():
             self.right_Constraint_target = vrConstraintService.createParentConstraint([btw_Controller.getNode()], constrained_movin_Tumbler1_NS, True)
         #change material transparency 0->1
         
-        findMat = vrMaterialService.findMaterial("Material.003")
-        getTr = vrdBRDFMaterial.getTransparency(findMat)
-        colorVect = QVector3D(0.25, 0.25, 0.25)
-        getTr.setSeeThrough(colorVect)
+        #findMat = vrMaterialService.findMaterial("Material.003")
+        #getTr = vrdBRDFMaterial.getTransparency(findMat)
+        #colorVect = QVector3D(0.25, 0.25, 0.25)
+        #getTr.setSeeThrough(colorVect)
         
     def ConstOff_Th_In(self):
         global dis_standard
@@ -134,10 +135,10 @@ class distances_obj1():
         dis_standard = 0
         #change material transparency 1->0
         
-        findMat = vrMaterialService.findMaterial("Material.003")
-        getTr = vrdBRDFMaterial.getTransparency(findMat)
-        colorVect = QVector3D(0, 0, 0)
-        getTr.setSeeThrough(colorVect)
+        #findMat = vrMaterialService.findMaterial("Material.003")
+        #getTr = vrdBRDFMaterial.getTransparency(findMat)
+        #colorVect = QVector3D(0, 0, 0)
+        #getTr.setSeeThrough(colorVect)
         
         self.subLoop()
         
@@ -230,7 +231,6 @@ def areaStand1():
     area_powerbank_Inputed.setRotation(0,0,180)
     aoi1 = area_powerbank_Inputed.getWorldTranslation()
     area_powerbank_Inputed.setWorldTranslation(aoi1[0], aoi1[1], float(890.0))
-    
 
 
 ###------------------------------------------------------------
@@ -378,8 +378,12 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         obj_list = []
         global obj_list_element_name
         obj_list_element_name = []
+        global hand_select
         
         self.cbbox_updated.clear() #콤보박스 초기화
+        
+        hand_select = "left-controller"
+        self.radiobtn_lefthand.setChecked(True)
         
         goon = vrNodeService.findNode("objFolder") #오브젝트가 모여있는 폴더 찾기
         #찾은 폴더에서 각 노드들의 이름을 가져오기
@@ -387,10 +391,9 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         obj_list = goon.getChildren() #각 노드의 id가 list형태로 들어옴. 이것을 이름으로 가져와야함.
         
         for obj_list_element in obj_list:
-            obj_list_element_name = obj_list_element.getName()
-            self.cbbox_updated.addItems(obj_list_element_name)
-            print(obj_list_element_name) # 이름으로 가져오기 성공
-
+            obj_list_element_name = obj_list_element.getName() #id를 이름형태로 변환
+            print("obj_list_element_name : " + obj_list_element_name) # 이름으로 가져오기 성공
+            self.cbbox_updated.addItem(obj_list_element_name) #addItems 하면 각 str문자마다 combobox 요소로 들어가게 되고 s를 빼면 문자열로 들어감.
         
         for ind in range(goon.getChildCount()):
             child = goon.getChild(ind)
@@ -400,7 +403,7 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
                 
     def radio_Lhand(self):
         global hand_select
-        hand_select = 1
+        hand_select = None
         global setL
         global setR
         global LL_thumb_4
@@ -424,9 +427,7 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
             
     def obj_hand_start(self):
         global controlled_obj
-        
         controlled_obj = self.cbbox_updated.currentText()
-        
         
         #follow to finger tip with cube
         cdscd = followCube()
