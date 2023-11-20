@@ -12,10 +12,7 @@ try:
     import vrVariantSets
     import vrVariants
     import time
-    import math
-    import vrAEBase
-    import vrCollision
-
+    import vrNodeUtils
 
 
 except ImportError:
@@ -25,217 +22,8 @@ except ImportError:
 import uiTools
 
 listToLoad = False
+vrTOC_form, vrTOC_base = uiTools.loadUiType("010_editVer5.ui")
 
-
-vrTOC_form, vrTOC_base = uiTools.loadUiType("temp.ui")
-
-###------------------------------------
-global hand_select
-hand_select = "left-controller"
-global cdscd
-
-class followCube():
-    global cTh
-    global cIn
-    cTh = vrNodeService.findNode("cubeThumb4")
-    cIn = vrNodeService.findNode("cubeIndex4")
-    
-    global constrained_movin_Tumbler1_NS
-    controlled_obj = None
-    constrained_movin_Tumbler1_NS = vrNodeService.findNode(controlled_obj)
-    
-    global btw_Controller
-    btw_Controller = vrDeviceService.getVRDevice(hand_select)
-    
-    global dis_standard_check
-    dis_standard_check = False
-    
-    global dis_standard
-    dis_standard = 0
-    
-    global dis_standard2
-    dis_standard2 = 0
-    
-    def __init__(self):
-        vrAEBase.__init__(self)
-        self.addLoop()
-        
-    def recEvent(self, state):
-        vrAEBase.recEvent(self, state)
-        
-    def ffc_distance_Th_In(self):
-        if setL == True and setR == False :
-            cTh.setWorldTranslation(LL_thumb_4.getWorldTranslation())
-            cIn.setWorldTranslation(LL_index_4.getWorldTranslation())
-        elif setL == False and setR == True :
-            cTh.setWorldTranslation(RR_thumb_4.getWorldTranslation())
-            cIn.setWorldTranslation(RR_index_4.getWorldTranslation())
-        
-        global c_t_QM
-        global c_i_QM
-        c_t_QM = vrdNode.getWorldTransform(cTh)
-        c_i_QM = vrdNode.getWorldTransform(cIn)
-    
-        global c_t_QM_Vect
-        global c_i_QM_Vect
-        c_t_QM_Vect = vrMathService.getTranslation(c_t_QM)
-        c_i_QM_Vect = vrMathService.getTranslation(c_i_QM)
-        
-    def dis_measure(self): #collision 되었을때, const on 유지 or Off 실행의 기준이 되는 dis_standard 를 리턴
-        global dis_standard
-        dis_standard = 0
-        global dis_standard_check
-        dis_standard = math.sqrt(
-                    (c_t_QM_Vect.x() - c_i_QM_Vect.x())**2 +
-                    (c_t_QM_Vect.y() - c_i_QM_Vect.y())**2 +
-                    (c_t_QM_Vect.z() - c_i_QM_Vect.z())**2
-                    )
-        dis_standard_check = True
-        return dis_standard
-        
-    def loop(self):
-        self.ffc_distance_Th_In()
-        
-    def substractLoop(self):
-        self.subLoop()
-
-class distances_obj1():
-    global isColl_Argu
-    def __init__(self, isColl_Argu):
-        vrAEBase.__init__(self)
-        self.addLoop()
-        self.subLoop()
-        self.setActive(True)
-        
-    def recEvent(self, state):
-        vrAEBase.recEvent(self, state)
-        
-    def Clear(self):
-        amount = vrConstraintService.getConstraints()
-        for i in amount:
-            vrConstraintService.deleteConstraint(i)
-            
-    def ConstOn_Th_In(self):
-        self.Clear()
-
-        if setL == True and setR == False :
-            self.left_Constraint_target = vrConstraintService.createParentConstraint([btw_Controller.getNode()], constrained_movin_Tumbler1_NS, True)
-        elif setL == False and setR == True :
-            self.right_Constraint_target = vrConstraintService.createParentConstraint([btw_Controller.getNode()], constrained_movin_Tumbler1_NS, True)
-        #change material transparency 0->1
-        
-        #findMat = vrMaterialService.findMaterial("Material.003")
-        #getTr = vrdBRDFMaterial.getTransparency(findMat)
-        #colorVect = QVector3D(0.25, 0.25, 0.25)
-        #getTr.setSeeThrough(colorVect)
-        
-    def ConstOff_Th_In(self):
-        global dis_standard
-        global dis_standard_check
-        self.Clear()
-        
-        dis_standard_check = False
-        dis_standard = 0
-        #change material transparency 1->0
-        
-        #findMat = vrMaterialService.findMaterial("Material.003")
-        #getTr = vrdBRDFMaterial.getTransparency(findMat)
-        #colorVect = QVector3D(0, 0, 0)
-        #getTr.setSeeThrough(colorVect)
-        
-        self.subLoop()
-        
-    def dis_measure2(self): # 기준이 된 큐브간 거리보다 작으면 const on 유지, 크면 const off 실행
-        global dis_standard2
-        dis_standard2 = math.sqrt(
-                    (c_t_QM_Vect.x() - c_i_QM_Vect.x())**2 +
-                    (c_t_QM_Vect.y() - c_i_QM_Vect.y())**2 +
-                    (c_t_QM_Vect.z() - c_i_QM_Vect.z())**2
-                    )
-        #print("dis_standard2 : " + str(dis_standard2))
-        return dis_standard2
-        
-    
-    def loop(self, isColl_Argu):
-        #print("(isColl_Argu : " + str(isColl_Argu))
-        if isColl_Argu == True :
-            self.ConstOn_Th_In()
-            #print("ConstOn_Th_In")
-            self.dis_measure2()
-            #print("dis_standard_True : " + str(dis_standard))
-            #print("dis_standard2_True : " + str(dis_standard2))
-            #print("dis_standard_check_True : " + str(dis_standard_check))
-            if dis_standard_check == True and dis_standard < dis_standard2:
-                self.ConstOff_Th_In()
-            
-        elif isColl_Argu == False :
-            #print("ConstOff_Th_In_if1")
-            self.dis_measure2()
-            #print("dis_standard_False : " + str(dis_standard))
-            #print("dis_standard2_False : " + str(dis_standard2))
-            #print("dis_standard_check_False : " + str(dis_standard_check))
-            if dis_standard_check == True and dis_standard < dis_standard2:
-                self.ConstOff_Th_In()
-                print("ConstOff_Th_In_if2")
-
-    def substractLoop(self):
-        self.subLoop()
-        print("loop stop by force distance_obj1")
-
-
-class CollisionAnd_obj1():
-    global isColl
-    global dis_standard_check
-    isColl = False 
-    def __init__(self, cols):
-        vrAEBase.__init__(self)
-        self.addLoop()
-        self.cols = cols
-        self.setActive(True)
-        
-    def recEvent(self, state):
-        vrAEBase.recEvent(self, state)
-        
-    def loop(self):
-        global isColl
-        if self.isActive() == true:
-            collide = 0
-
-            l = len(self.cols)
-            for i in range(l):
-                if not self.cols[i].isColliding():
-                    break
-                else:
-                    collide += 1
-            if collide == l:
-                print("sticker")
-                isColl = True
-                #self.callAllConnected()
-                #print("dis_standard_check----1" + str(dis_standard_check))
-                if dis_standard_check == False :
-                    cdscd.dis_measure()
-                    #print("dis_standard_check----2" + str(dis_standard_check))
-                    #print("extract dis_standard " + str(dis_standard))
-                distances_instance.loop(True)
-            else :
-                isColl = False
-                #print("dis_standard_check----1-1" + str(dis_standard_check))
-                distances_instance.loop(False)
-
-    def substractLoop(self):
-        self.subLoop()
-        print("loop stop by force 3 collid")
-
-#find collision area, find sorted obj
-
-
-def areaStand1():
-    area_powerbank_Inputed.setRotation(0,0,180)
-    aoi1 = area_powerbank_Inputed.getWorldTranslation()
-    area_powerbank_Inputed.setWorldTranslation(aoi1[0], aoi1[1], float(890.0))
-
-
-###------------------------------------------------------------
 
 class vrWindowClass(vrTOC_form, vrTOC_base):
     
@@ -249,33 +37,58 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         self.parent = parent
         self.setupUi(self)
         
-        #self.ui_pushbutton_Lefthand.clicked.connect(self.LHand_cc) #버튼 클릭 신호가 감지되면 펑션을 호출
-        #self.ui_pushbutton_Righthand.clicked.connect(self.RHand_cc)
+        self.ui_pushbutton_Lefthand.clicked.connect(self.LHandFunction) 
+        self.ui_pushbutton_Righthand.clicked.connect(self.RHandFunction)
         
-        #self.vset_select_combo_box1.currentIndexChanged.connect(self.ComboBox1Click) #콤보 박스의 현재 인덱스가 변경되면 펑션을 호출
+        self.ui_pushbutton_Lefthand.clicked.connect(self.LHand_cc) 
+        self.ui_pushbutton_Righthand.clicked.connect(self.RHand_cc)
         
-        #self.vset_select_combo_box1_radio_on.toggled.connect(self.radioBox1) #라디오 버튼이 변경될때마다 펑션을 호출
+        self.ui_pushbutton_load.clicked.connect(self.loadFunction)
+        self.ui_pushbutton_reset.clicked.connect(self.resetFunction)
         
-        #self.ui_horizontalSlider.valueChanged.connect(self.sensitivity_scale)
+        self.vset_select_combo_box1.currentIndexChanged.connect(self.ComboBox1Click) 
         
-        self.psbtn_update.clicked.connect(self.update_button)
+        self.vset_select_combo_box1_radio_on.toggled.connect(self.radioBox1) 
         
-        self.radiobtn_lefthand.toggled.connect(self.radio_Lhand)
+        self.ui_horizontalSlider.valueChanged.connect(self.sensitivity_scale)
         
-        self.psbtn_obj_hand_start.clicked.connect(self.obj_hand_start)
+        self.ui_pushbutton_create.clicked.connect(self.createFunction)
+        self.transparency_radio_on.toggled.connect(self.trnsRadioBox)
+        
+    def createFunction(self) :
+        if vrNodeService.findNode("cubeIndex4").getName() == "cubeIndex4" and vrNodeService.findNode("cubeThumb4").getName() == "cubeThumb4":
+            print("create skip")
+        else :
+            print("create start")
+            temp_cubeI = vrNodeUtils.createSphere(2, 10, 0.5,0.5,0.5)
+            temp_cubeI.setName("cubeIndex4")
+            
+            temp_cubeT = vrNodeUtils.createSphere(2, 10, 0.5,0.5,0.5)
+            temp_cubeT.setName("cubeThumb4")
+            
+    def trnsRadioBox(self) :
+        trnsthumb = vrScenegraph.findNode("cubeThumb4")
+        trnsindex = vrScenegraph.findNode("cubeIndex4")
+        if self.transparency_radio_on.isChecked() :
+            vrScenegraph.showNode(trnsthumb)
+            vrScenegraph.showNode(trnsindex)
+        else :
+            vrScenegraph.hideNode(trnsthumb)
+            vrScenegraph.hideNode(trnsindex)
+        
         
     def LHandFunction(self) :
         #lhand vset 호출
-        vrVariants.selectVariantSet("set_LHand") # 왼손/오른손 변경 버튼
+        vrVariants.selectVariantSet("set_LHand")
         
         self.ui_pushbutton_Lefthand.setCheckable(True)
         self.ui_pushbutton_Righthand.setCheckable(False)
         
-        self.groupBox_2.setEnabled(True) # hand side가 선택되면 다음 단계의 버튼이 활성화됨
+        self.groupBox_2.setEnabled(True) 
     
     def RHandFunction(self) :
         #rhand vset 호출
-        vrVariants.selectVariantSet("set_RHand") # 왼손/오른손 변경 버튼
+        vrVariants.selectVariantSet("set_RHand")
         
         self.ui_pushbutton_Lefthand.setCheckable(False)
         self.ui_pushbutton_Righthand.setCheckable(True)
@@ -283,81 +96,67 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
         self.groupBox_2.setEnabled(True)
         
     def LHand_cc(self):
-        #self.ui_pushbutton_Lefthand.setStyleSheet("background-color : orange")
         self.ui_pushbutton_Lefthand.setStyleSheet("font: bold 16px")
         self.ui_pushbutton_Righthand.setStyleSheet("background-color : dark gray")
         
     def RHand_cc(self):
         self.ui_pushbutton_Lefthand.setStyleSheet("background-color : dark gray")
-        #self.ui_pushbutton_Righthand.setStyleSheet("background-color : orange")
         self.ui_pushbutton_Righthand.setStyleSheet("font: bold 16px")
         
     def loadFunction(self) :
-        self.vset_select_combo_box1.clear() #초기화
-        #self.vset_select_combo_box2.clear()
+        self.vset_select_combo_box1.clear() 
         global comboBox_vset_list
-        comboBox_vset_list = [] #load 버튼을 누를때마다 combobox list를 초기화. 이걸 하지않으면 list가 쌓임.
-        
-        
-        #vrVariants.selectVariantSet("func_creditCard")
+        comboBox_vset_list = [] 
         vred_vset_list1 = vrVariantSets.getVariantSets()
-        #print(vred_vset_list1)
         
         for element1 in vred_vset_list1 : 
             if "func_" in element1:         
                 comboBox_vset_list.append(element1)  
                 
-        print("comboBox vset list = " + str(comboBox_vset_list))
-        
+        #print("comboBox vset list = " + str(comboBox_vset_list))
         self.vset_select_combo_box1.addItems(comboBox_vset_list)
-        #self.vset_select_combo_box1.setCurrentIndex(0)
-        #self.vset_select_combo_box2.addItems(comboBox_vset_list)
-        #self.vset_select_combo_box2.setCurrentIndex(1)
         
-        self.groupBox_3.setEnabled(True) # load 버튼을 클릭하게 되면 다음 단계가 활성화.
-        self.vset_select_combo_box1.setEnabled(True) # combobox 가 비활성화 상태로 유지되는 현상 체크
+        self.groupBox_3.setEnabled(True) 
+        self.vset_select_combo_box1.setEnabled(True) 
         self.ui_pushbutton_reset.setEnabled(True)
-        
         
     def resetFunction(self) :
         print("reset btn Clicked")
-        self.vset_select_combo_box1.clear() #초기화
-        #self.vset_select_combo_box2.clear() #초기화
+        self.vset_select_combo_box1.clear() 
         
-        self.vset_select_combo_box1_radio_off.setChecked(True)# radio button 디폴트값인 off로 지정.
-        #self.vset_select_combo_box2_radio_off.setChecked(True)
-        
+        self.vset_select_combo_box1_radio_off.setChecked(True)
 
-        vrVariants.selectVariantSet("vset_reset_btn") #0905 vred의 vset 호출. 여기엔 constraint 삭제, loop 삭제, 사용하지 않는 material 삭제, 모든 오브젝트를 hide.
+        vrVariants.selectVariantSet("vset_reset_btn") 
         
         self.ui_pushbutton_Lefthand.setStyleSheet("background-color : dark gray")
         self.ui_pushbutton_Righthand.setStyleSheet("background-color : dark gray")
         
-        self.groupBox_2.setEnabled(False) # 리셋버튼을 누르면 상태를 비활성화.
+        self.groupBox_2.setEnabled(False) 
         self.groupBox_3.setEnabled(False)
         self.ui_pushbutton_reset.setEnabled(False)
 
-    def ComboBox1Click(self) : # combobox 를 클릭해 리스트중 하나를 클릭하면 클릭된 리스트 이름을 비교.
-        print("combobox1 clicked")
+    def ComboBox1Click(self) : 
         if self.vset_select_combo_box1.currentText() == comboBox_vset_list[0] :
-            print("create power bank model")
             vrVariants.selectVariantSet(self.vset_select_combo_box1.currentText())
             
         elif self.vset_select_combo_box1.currentText() == comboBox_vset_list[1] :
-            print("create func_tumbler model")
             vrVariants.selectVariantSet(self.vset_select_combo_box1.currentText())
             
         elif self.vset_select_combo_box1.currentText() == comboBox_vset_list[2] :
-            print("create func_creditCard model")
             vrVariants.selectVariantSet(self.vset_select_combo_box1.currentText())
             
+        elif self.vset_select_combo_box1.currentText() == comboBox_vset_list[3] :
+            vrVariants.selectVariantSet(self.vset_select_combo_box1.currentText())
+            
+        elif self.vset_select_combo_box1.currentText() == comboBox_vset_list[4] :
+            vrVariants.selectVariantSet(self.vset_select_combo_box1.currentText())    
             
     def radioBox1(self):
         if self.vset_select_combo_box1_radio_on.isChecked() : 
             print("RB1 on checked")
             rightnowOnVset = self.vset_select_combo_box1.currentText()
             print("rightnowOn" + str(rightnowOnVset))
-            vrVariants.selectVariantSet("_" + rightnowOnVset[5:] + "_show")# func_objName 에서 slice 후 덧붙여서 vset호출           
+            vrVariants.selectVariantSet("_" + rightnowOnVset[5:] + "_show")           
         else : 
             print("RB1 off checked")
             rightnowOffVset = self.vset_select_combo_box1.currentText()
@@ -366,128 +165,14 @@ class vrWindowClass(vrTOC_form, vrTOC_base):
             
     def sensitivity_scale(self, val):
         print("sensitivity_scale changed!!")
-        print(val)  #slider 로 변경되는 값을 터미널에 출력
-        self.slider_label.setText(str(val)) # label 값을 slider bar 값으로 set
+        print(val)  
+        self.slider_label.setText(str(val)) 
         
         thumb_scale = vrScenegraph.findNode("cubeThumb4")
         index_scale = vrScenegraph.findNode("cubeIndex4")
         
-        thumb_scale.setScale(val * (1/100), val * (1/100), val * (1/100)) # scale 값 반영
+        thumb_scale.setScale(val * (1/100), val * (1/100), val * (1/100)) 
         index_scale.setScale(val * (1/100), val * (1/100), val * (1/100))
-        
-    def update_button(self) :
-        global obj_list
-        obj_list = []
-        global obj_list_element_name
-        obj_list_element_name = []
-        global hand_select
-        global controlled_obj
-        global area1
-        global area_powerbank_Inputed
-        global setL
-        global setR
-        
-        self.cbbox_updated.clear() #콤보박스 초기화
-        
-        setL = True
-        setR = False
-        hand_select = "left-controller"
-        self.radiobtn_lefthand.setChecked(True)
-        
-        goon = vrNodeService.findNode("objFolder") #오브젝트가 모여있는 폴더 찾기
-        #찾은 폴더에서 각 노드들의 이름을 가져오기
-        
-        obj_list = goon.getChildren() #각 노드의 id가 list형태로 들어옴. 이것을 이름으로 가져와야함.
-        
-        for obj_list_element in obj_list:
-            obj_list_element_name = obj_list_element.getName() #id를 이름형태로 변환
-            print("obj_list_element_name : " + obj_list_element_name) # 이름으로 가져오기 성공
-            self.cbbox_updated.addItem(obj_list_element_name) #addItems 하면 각 str문자마다 combobox 요소로 들어가게 되고 s를 빼면 문자열로 들어감.
-        
-        
-        controlled_obj = obj_list_element_name[-1]
-        
-        area1 = vrNodeService.findNode("c_area_1")
-
-        area_powerbank_Inputed = vrScenegraph.findNode(controlled_obj)
-        
-        for ind in range(goon.getChildCount()):
-            child = goon.getChild(ind)
-            if child.getName() == "9":
-                print("detect 9!!")
-                
-                
-    def radio_Lhand(self):
-        global hand_select
-        hand_select = None
-        global setL
-        global setR
-        global LL_thumb_4
-        global LL_index_4
-        global RR_thumb_4
-        global RR_index_4
-        if self.radiobtn_lefthand.isChecked() :
-            print("left")
-            hand_select = "left-controller"
-            setL == True
-            setR == False
-        else :
-            print("right")
-            hand_select = "right-controller"
-            setL == False
-            setR == True
-            
-    def obj_hand_start(self):
-        global cdscd
-        global controlled_obj
-        controlled_obj = self.cbbox_updated.currentText()
-        print("one")
-        global hand_select
-        global LL_index_4
-        global LL_thumb_4
-        global RR_thumb_4
-        global RR_index_4
-        
-        if self.radiobtn_lefthand.isChecked() :
-            print("left")
-            hand_select = "left-controller"
-            setL == True
-            setR == False
-            print(vrScenegraphService.getInternalRootNode())
-            print(vrNodeService.getRootNode())
-            LL_thumb_4 = vrNodeService.findNode('L_thumb_4_INT', root=vrScenegraphService.getInternalRootNode())
-            LL_index_4 = vrNodeService.findNode('L_index_4_INT', root=vrScenegraphService.getInternalRootNode())
-        else :
-            print("right")
-            hand_select = "right-controller"
-            setL == False
-            setR == True
-            RR_thumb_4 = vrNodeService.findNode('R_thumb_4_INT', root=vrScenegraphService.getInternalRootNode())
-            RR_index_4 = vrNodeService.findNode('R_index_4_INT', root=vrScenegraphService.getInternalRootNode())
-        
-        #follow to finger tip with cube
-        cdscd = followCube
-        print("two")
-
-        # create some collision objects
-        collx = vrCollision([cTh], [constrained_movin_Tumbler1_NS])
-        print("three")
-        colly = vrCollision([constrained_movin_Tumbler1_NS], [cIn])
-
-        distances_instance = distances_obj1(False)
-
-        collxy = CollisionAnd_obj1([collx, colly]) 
-        #collxy.connect("print 'WM-------------------'")
-
-
-        #create collision area
-        collArea1 = vrCollision([area_powerbank_Inputed], [area1])
-        collArea1.connect(areaStand1)
-        
-        
-
-
-
 
 
 if not importError:
